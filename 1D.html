@@ -3,8 +3,9 @@
 <head>
 </head>
 <body>
-<h1>1D game!</h1>
+<h3>Red at 0 hurts. Click/tap to destroy the blocks only if they will be red at 0.</h3>
 <p id="hptxt">hp: n</p>
+<p id="scoretxt">score: 0</p>
 </body>
 <canvas id="canvas" width="680" height="480" style="border:1px solid #000000; position:relative; left:24px; top:24px"></canvas>
 
@@ -15,6 +16,7 @@ var canvas_width = canvas.width;
 var canvas_height = canvas.height;
 
 var hptxt = document.getElementById('hptxt');
+var scoretxt = document.getElementById('scoretxt');
 
 var mspf = 30; //ms per frame
 var time_ms = 0;
@@ -24,6 +26,7 @@ var gridpx = 12; //number of px per grid bar
 var posbase = canvas_height - 60;
 
 var hp = 3;
+var score = 0;
 
 class Ghost {
 	constructor(on,off,speed) {
@@ -42,8 +45,9 @@ class Ghost {
 		this.w = gridpx; //width
 		this.h = gridpx; //height
 		this.atline = 0;
-		this.gridct = 0;
+		this.gridct = 0; //most recent grid line passed
 		this.xpos = rand(250,350);
+		this.gridline_tot = 0;
 	}
 	
 	update() {
@@ -62,10 +66,10 @@ class Ghost {
 			if (this.posgrid > this.posgrid_prev) {
 				this.atline = 1;
 				this.gridct += 1;
+				this.gridline_tot += 1;
 			}
 			
 			if (this.atline) {
-				console.log(this.ison);
 				if (this.ison) {
 					if (this.gridct >= this.on) {
 						this.gridct = 0;
@@ -89,6 +93,52 @@ class Ghost {
 		}
 	}
 	
+	calc_end() { //like update, but advance to next gridline each iteration of loop
+		for (let i = 0; i<100; i++) {
+			if (this.active) {
+				this.pos += 0.5*gridpx;
+				this.travelct += 0.5*gridpx;
+				if (this.pos >= posbase) {
+					this.active = 0;
+					//do stuff when past base
+					if (!this.ison) {hp -= 1; hptxt.innerHTML = "hp :" + hp;} //if it would be off at base, lose 1 hp
+					else {score += -1 + posbase/gridpx - this.gridline_tot; scoretxt.innerHTML = "score :" + score;} //if it would be on at base, get points based on how early you stopped it
+					return;
+				}
+				
+				this.posgrid = Math.floor(this.pos/gridpx);
+				if (this.posgrid > this.posgrid_prev) {
+					this.atline = 1;
+					this.gridct += 1;
+					this.gridct_tot += 1;
+				}
+				
+				if (this.atline) {
+					if (this.ison) {
+						if (this.gridct >= this.on) {
+							this.gridct = 0;
+							this.ison = 0;
+							this.color = this.color_off;
+						}
+					}
+					else {
+						if (this.gridct >= this.off) {
+							this.gridct = 0;
+							this.ison = 1;
+							this.color = this.color_on;
+						}
+					}
+				}
+				this.atline = 0;
+				this.posgrid_prev = this.posgrid
+			}
+			else {
+				1;
+			}
+		}
+		//ghost is deleted elsewhere
+	}
+	
 	draw() {
 		ctx.beginPath();
 		ctx.fillStyle = this.color;
@@ -97,6 +147,8 @@ class Ghost {
 		ctx.fill();
 		ctx.stroke();
 		ctx.closePath();
+		ctx.fillStyle = "black";
+		ctx.fillText(-1 + posbase/gridpx - this.gridline_tot,this.xpos + 0.1*this.w, this.pos + 0.75*this.h);
 	}
 	
 	check_clicked(xclicked, yclicked) { //check if clicked on
@@ -109,7 +161,7 @@ class Ghost {
 	}
 	
 	clicked() { //called when ghost is clicked
-		return 1; //todo: calculate if ghost will hit base and do stuff accordingly
+		this.calc_end();
 	}
 }
 
@@ -137,14 +189,26 @@ function click(event) {
 
 function loop() {
 
+//check if lost
+if (hp <= 0) {
+	window.alert("nice try");
+	//reset game
+	ghosts.splice(0, ghosts.length);
+	score = 0;
+	hp = 3;
+	hptxt.innerHTML = "hp: " + hp;
+	scoretxt.innerHTML = "score: " + score;
+	
+}
+
 // ----game logic ------
 //spawn new ghost
 if (frame_ct % 120 == 0) {
-	ghosts.push(new Ghost(rand(2,8),rand(2,8),rand(0.2,0.6)));
+	ghosts.push(new Ghost(Math.floor(rand(2,8)),Math.floor(rand(2,8)),rand(0.2,0.6)));
 }
 
 //update ghost positions
-for (i = 0; i < ghosts.length; i++) {
+for (let i = 0; i < ghosts.length; i++) {
 	ghosts[i].update()
 }
 
