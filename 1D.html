@@ -21,6 +21,7 @@ var scoretxt = document.getElementById('scoretxt');
 var mspf = 30; //ms per frame
 var time_ms = 0;
 var frame_ct = 0;
+var just_hit = 0;
 
 var gridpx = 12; //number of px per grid bar
 var posbase = canvas_height - 60;
@@ -57,7 +58,7 @@ class Ghost {
 			if (this.pos >= posbase) {
 				this.active = 0;
 				//todo: do stuff when past base
-				if (this.ison) {hp -= 1; hptxt.innerHTML = "hp :" + hp;}
+				if (this.ison) {hp -= 1; hptxt.innerHTML = "hp :" + hp; just_hit = 1;}
 				else {1;}
 				return;
 			}
@@ -101,7 +102,7 @@ class Ghost {
 				if (this.pos >= posbase) {
 					this.active = 0;
 					//do stuff when past base
-					if (!this.ison) {hp -= 1; hptxt.innerHTML = "hp :" + hp;} //if it would be off at base, lose 1 hp
+					if (!this.ison) {hp -= 1; hptxt.innerHTML = "hp :" + hp; just_hit = 1;} //if it would be off at base, lose 1 hp
 					else {score += -1 + posbase/gridpx - this.gridline_tot; scoretxt.innerHTML = "score :" + score;} //if it would be on at base, get points based on how early you stopped it
 					return;
 				}
@@ -191,6 +192,11 @@ function loop() {
 
 //check if lost
 if (hp <= 0) {
+	if (just_hit) {
+		ctx.fillStyle = "red";
+		ctx.fillRect(0, 0, canvas_width, canvas_height); 
+		just_hit = 0;
+	}
 	window.alert("nice try. Score: " + score);
 	//reset game
 	ghosts.splice(0, ghosts.length);
@@ -198,7 +204,6 @@ if (hp <= 0) {
 	hp = 3;
 	hptxt.innerHTML = "hp: " + hp;
 	scoretxt.innerHTML = "score: " + score;
-	
 }
 
 // ----game logic ------
@@ -211,7 +216,6 @@ if (frame_ct % 120 == 0) {
 for (let i = 0; i < ghosts.length; i++) {
 	ghosts[i].update()
 }
-
 
 
 // ---- draw stuff -------
@@ -232,6 +236,12 @@ for (i = 0; i < ghosts.length; i++) {
 ctx.fillStyle = "black";
 ctx.fillRect(0,posbase,canvas_width,4);
 ctx.fillRect(0,posbase - gridpx,canvas_width,4);
+
+if (just_hit) {
+	ctx.fillStyle = "red";
+	ctx.fillRect(0, 0, canvas_width, canvas_height); 
+	just_hit = 0;
+}
 
 //update timer
 time_ms += mspf;
