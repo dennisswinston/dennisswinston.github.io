@@ -191,7 +191,7 @@ function loop() {
 
 //check if lost
 if (hp <= 0) {
-	window.alert("nice try");
+	window.alert("nice try. Score: " + score);
 	//reset game
 	ghosts.splice(0, ghosts.length);
 	score = 0;
