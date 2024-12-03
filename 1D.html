@@ -25,6 +25,7 @@ var just_hit = 0;
 
 var gridpx = 12; //number of px per grid bar
 var posbase = canvas_height - 60;
+var spawntimer = 300;
 
 var hp = 3;
 var score = 0;
@@ -208,7 +209,7 @@ if (hp <= 0) {
 
 // ----game logic ------
 //spawn new ghost
-if (frame_ct % 120 == 0) {
+if (frame_ct % spawntimer == 0) {
 	ghosts.push(new Ghost(Math.floor(rand(2,8)),Math.floor(rand(2,8)),rand(0.2,0.6)));
 }
 
@@ -251,6 +252,12 @@ if (time_ms % 1000 == 0) { //1 point per second
 	score += 1;
 	scoretxt.innerHTML = "score: " + score;
 }
+
+if (time_ms % 5000 == 0) {
+	spawntimer -= 1;
+}
+
+
 
 }
 
