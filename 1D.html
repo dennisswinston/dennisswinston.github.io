@@ -247,6 +247,11 @@ if (just_hit) {
 time_ms += mspf;
 frame_ct += 1;
 
+if (time_ms % 1000 == 0) { //1 point per second
+	score += 1;
+	scoretxt.innerHTML = "score: " + score;
+}
+
 }
 
 document.addEventListener("click", click);
