@@ -4,5 +4,182 @@
 </head>
 <body>
 <h1>1D game!</h1>
+<p id="hptxt">hp: n</p>
 </body>
+<canvas id="canvas" width="680" height="480" style="border:1px solid #000000; position:relative; left:24px; top:24px"></canvas>
+
+<script>
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+var canvas_width = canvas.width;
+var canvas_height = canvas.height;
+
+var hptxt = document.getElementById('hptxt');
+
+var mspf = 30; //ms per frame
+var time_ms = 0;
+var frame_ct = 0;
+
+var gridpx = 12; //number of px per grid bar
+var posbase = canvas_height - 60;
+
+var hp = 3;
+
+class Ghost {
+	constructor(on,off,speed) {
+		this.on = on; //how many spaces on
+		this.off = off; //how many spaces off
+		this.speed = speed; //movement speed in px per frame
+		this.pos = 0.0; //position
+		this.posgrid = 0; //position on grid
+		this.posgrid_prev = 0;
+		this.color_on = "red";
+		this.color_off = "blue";
+		this.color = this.color_on;
+		this.travelct = 0.0; //travel distance counter for switching on and off
+		this.ison = 1; //1 means ghost is on, 0 means off
+		this.active = 1; //active in game (hasn't reached base yet)
+		this.w = gridpx; //width
+		this.h = gridpx; //height
+		this.atline = 0;
+		this.gridct = 0;
+		this.xpos = rand(250,350);
+	}
+	
+	update() {
+		if (this.active) {
+			this.pos += this.speed;
+			this.travelct += this.speed;
+			if (this.pos >= posbase) {
+				this.active = 0;
+				//todo: do stuff when past base
+				if (this.ison) {hp -= 1; hptxt.innerHTML = "hp :" + hp;}
+				else {1;}
+				return;
+			}
+			
+			this.posgrid = Math.floor(this.pos/gridpx);
+			if (this.posgrid > this.posgrid_prev) {
+				this.atline = 1;
+				this.gridct += 1;
+			}
+			
+			if (this.atline) {
+				console.log(this.ison);
+				if (this.ison) {
+					if (this.gridct >= this.on) {
+						this.gridct = 0;
+						this.ison = 0;
+						this.color = this.color_off;
+					}
+				}
+				else {
+					if (this.gridct >= this.off) {
+						this.gridct = 0;
+						this.ison = 1;
+						this.color = this.color_on;
+					}
+				}
+			}
+			this.atline = 0;
+			this.posgrid_prev = this.posgrid
+		}
+		else {
+			1;
+		}
+	}
+	
+	draw() {
+		ctx.beginPath();
+		ctx.fillStyle = this.color;
+		ctx.strokeStyle = "black";
+		ctx.rect(this.xpos,this.pos,this.w,this.h);
+		ctx.fill();
+		ctx.stroke();
+		ctx.closePath();
+	}
+	
+	check_clicked(xclicked, yclicked) { //check if clicked on
+		if (xclicked > this.xpos && xclicked < this.xpos + this.w && yclicked > this.pos && yclicked < this.pos + this.h) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
+	
+	clicked() { //called when ghost is clicked
+		return 1; //todo: calculate if ghost will hit base and do stuff accordingly
+	}
+}
+
+//setup
+const ghosts = [];
+
+
+function rand(min,max) {
+	return Math.random() * (max - min) + min;
+}
+
+
+function click(event) {
+	//loop through ghosts and check if clicked
+	var rect = canvas.getBoundingClientRect();
+	var xclicked = event.clientX - rect.left;
+	var yclicked = event.clientY - rect.top;
+	for (i = 0; i < ghosts.length; i++) {
+		if (ghosts[i].check_clicked(xclicked, yclicked)) { //true if you click in the ghost's rectangle
+			ghosts[i].clicked();
+			ghosts.splice(i,1) //remove from array when clicked
+		}
+	}
+}
+
+function loop() {
+
+// ----game logic ------
+//spawn new ghost
+if (frame_ct % 120 == 0) {
+	ghosts.push(new Ghost(rand(2,8),rand(2,8),rand(0.2,0.6)));
+}
+
+//update ghost positions
+for (i = 0; i < ghosts.length; i++) {
+	ghosts[i].update()
+}
+
+
+
+// ---- draw stuff -------
+ctx.clearRect(0, 0, canvas_width, canvas_height); //clear canvas
+
+//draw grid lines
+for (i = 0; i < posbase/gridpx; i++) {
+	ctx.fillStyle = "gray";
+	ctx.fillRect(250,i*gridpx,100,1);
+}
+
+//draw ghosts
+for (i = 0; i < ghosts.length; i++) {
+	ghosts[i].draw()
+}
+
+//draw base
+ctx.fillStyle = "black";
+ctx.fillRect(0,posbase,canvas_width,4);
+ctx.fillRect(0,posbase - gridpx,canvas_width,4);
+
+//update timer
+time_ms += mspf;
+frame_ct += 1;
+
+}
+
+document.addEventListener("click", click);
+
+hptxt.innerHTML = "hp: " + hp;
+setInterval(loop,mspf);
+
+</script>
+
 </html>
