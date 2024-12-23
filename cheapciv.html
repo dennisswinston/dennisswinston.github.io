@@ -31,8 +31,13 @@
         }
     </style>
 		
+		<style type="body">
+		background: transparent;
+		</style>
+		
 		
 		<img id="model_Settler" src="images/test.bmp" hidden="hidden">
+		<img id="model_Warrior" src="images/model_Warrior.png" hidden="hidden">
 
 </head>
 
@@ -77,6 +82,7 @@ var background;
 
 //images
 const model_Settler = document.getElementById("model_Settler");
+const model_Warrior = document.getElementById("model_Warrior");
 
 var next_unit_id = 0;
 var next_city_id = 0;
@@ -112,7 +118,7 @@ class Unit {
 			this.moves = 1; //moves allowed each turn
 			this.shieldcost = 10; //in getShieldcost
 			this.hp = 3; //max hp
-			this.model = 0; //todo: model to display on map
+			this.model = model_Warrior; //todo: model to display on map
 			this.icon = 0; //todo: icon
 		}
 		if (this.name === "Settler") {
