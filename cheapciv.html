@@ -36,7 +36,7 @@
 <body>
 <p id="fps">Change text here.</p>
 
-<img src="images/test.bmp">
+<img id="model_Settler" src="images/test.bmp">
 
 </body>
 
@@ -74,6 +74,10 @@ var update_background = 1;
 var canvas_width = canvas.width;
 var canvas_height = canvas.height;
 var background;
+
+//images
+const model_Settler = document.getElementById("model_Settler");
+
 var next_unit_id = 0;
 var next_city_id = 0;
 
@@ -118,7 +122,7 @@ class Unit {
 			this.moves = 1; //moves allowed each turn
 			this.shieldcost = 30;
 			this.hp = 1; //max hp
-			this.model = 0; //todo: model to display on map
+			this.model = model_Settler; //todo: model to display on map
 			this.icon = 0; //todo: icon
 		}
 		if (this.name === "Worker") {
@@ -990,8 +994,9 @@ if (update_background == 1) {
 					else { //if not selected, draw normally
 						ctx.fillStyle = civs[units_map[y][x][0].civ].color;
 					}
-          drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/4, w/4, 0.0);
-          ctx.fillStyle = "green"; //reset fill color
+          //drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/4, w/4, 0.0);
+          ctx.drawImage(0,0,48,48,_tileX + 0.2*w,_tileY + 0.5*w, 48, 48);
+					ctx.fillStyle = "green"; //reset fill color
         }      
       }
 		}
