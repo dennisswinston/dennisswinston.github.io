@@ -999,6 +999,7 @@ if (update_background == 1) {
           //drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/4, w/4, 0.0);
 					
 
+					//set g==255 to transparent
 					let canvas_temp = document.createElement('canvas');
 					let ctx_temp = canvas_temp.getContext('2d');
 					
@@ -1024,10 +1025,9 @@ if (update_background == 1) {
 					}
 					
 					let imageData = new ImageData(pix, _model.width, _model.height);
-					const bmp = createImageBitmap(imageData);	
-					
-          ctx.drawImage(bmp,_tileX + 0.1*w,_tileY);
-					ctx.fillStyle = "green"; //reset fill color
+
+          ctx.drawImage(imageData,_tileX + 0.1*w,_tileY);
+					//ctx.fillStyle = "green"; //reset fill color
         }      
       }
 		}
