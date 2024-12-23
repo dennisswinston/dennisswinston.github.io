@@ -995,7 +995,7 @@ if (update_background == 1) {
 						ctx.fillStyle = civs[units_map[y][x][0].civ].color;
 					}
           //drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/4, w/4, 0.0);
-          ctx.drawImage(0,0,48,48,_tileX + 0.2*w,_tileY + 0.5*w, 48, 48);
+          ctx.drawImage(civs[units_map][y][x][0].model,0,0,48,48,_tileX + 0.2*w,_tileY + 0.5*w, 48, 48);
 					ctx.fillStyle = "green"; //reset fill color
         }      
       }
