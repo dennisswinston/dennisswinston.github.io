@@ -1006,9 +1006,10 @@ if (update_background == 1) {
 					let canvas_temp = document.createElement('canvas');
 					let ctx_temp = canvas_temp.getContext('2d');
 					
-					canvas_temp.width = img.width;
-					canvas_temp.height = img.height;
-					ctx_temp.drawImage(units_map[y][x][0].model, 0, 0 );
+					let _model = units_map[y][x][0].model;
+					canvas_temp.width = _model.width;
+					canvas_temp.height = _model.height;
+					ctx_temp.drawImage(_model, 0, 0 );
 					var imgd = ctx_temp.getImageData(0,0,48,48),
 										
 					pix = imgd.data;
@@ -1025,8 +1026,7 @@ if (update_background == 1) {
 								pix[i + 3] = 0;
 						}
 					}
-
-					
+				
           ctx.putImageData(imgd,_tileX + 0.1*w,_tileY);
 					ctx.fillStyle = "green"; //reset fill color
         }      
