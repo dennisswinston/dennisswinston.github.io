@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<head>
+    <style type="text/css">
+        .context-menu {
+            position: absolute;
+            text-align: center;
+            background: lightgray;
+            border: 1px solid black;
+        }
+
+        .context-menu ul {
+            padding: 0px;
+            margin: 0px;
+            min-width: 150px;
+            list-style: none;
+        }
+
+        .context-menu ul li {
+            padding-bottom: 7px;
+            padding-top: 7px;
+            border: 1px solid black;
+        }
+
+        .context-menu ul li a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .context-menu ul li:hover {
+            background: darkgray;
+        }
+    </style>
+
+</head>
+
+<body>
+<p id="fps">Change text here.</p>
+</body>
+
+<canvas id="canvas" width="680" height="480" style="border:1px solid #000000; position:relative; left:24px; top:24px"></canvas>
+<br><br><br>
+<button type="button" onclick="endTurn(civ0)">End Turn</button> 
+
+<p id="turninfo">Turn: 1</p>
+<p id="cityinfo">cityinfo</p>
+
+<div id="contextMenu" class="context-menu" style="display:none">
+    <ul id="cityactions">
+            <li><a onclick="assignCitizens()">Assign Citizens</a></li>
+            <li><a onclick="hurryProduction()">Hurry Production</a></li>
+            <li><a onclick="setProduction(0)">make thing 0</a></li>
+            <li><a onclick="setProduction(1)">make thing 1</a></li>
+            <li><a onclick="setProduction(2)">make thing 2</a></li>
+            <li><a onclick="setProduction(3)">make thing 3</a></li>
+            <li><a onclick="setProduction(4)">make thing 4</a></li>
+    </ul>
+</div>
+
+<script>
+//select unit: left click
+//move unit: right click (to adjacent tile only)
+//right click after selecting city to get menu
+
+//document.getElementById("txt1").innerHTML = "new text";
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+var fpsOut = document.getElementById('fps');
+var turninfo = document.getElementById('turninfo');
+var cityinfo = document.getElementById('cityinfo');
+var update_background = 1;
+var canvas_width = canvas.width;
+var canvas_height = canvas.height;
+var background;
+var next_unit_id = 0;
+var next_city_id = 0;
+
+const w = 48; //width of tile (48)
+var numTilesX = 30; //inline and offset tiles are counted separately, so numTilesX = 12 gives 24 columns
+var numTilesY = 30;
+var numTilesX_oncanvas = Math.ceil(canvas_width/(1.41*w));
+var scroll_rate = 10; //px per frame to scroll when mouse is at edge
+wrapX = 1; //wrap x so scrolling to edge of map wraps around back to other side
+
+var turn = 1;
+var keypressedonce = "none"; //key currently being pressed, set back to "none" after action is done
+var leftclickevent;
+var leftclicked = 0;
+var rightclickevent;
+var rightclicked = 0;
+
+function randint(min,max) {
+	return Math.floor(Math.random() * (max - min) + min);
+}
+
+class Unit {
+  constructor(name, civ) {
+    this.id = next_unit_id;
+    next_unit_id += 1;
+    this.name = name; //"warrior"
+    this.civ = civ; //number
+		if (this.name === "Warrior") {
+			this.type = "military_land"; //same types as in getMakingType
+			this.atk = 1;
+			this.def = 1;
+			this.moves = 1; //moves allowed each turn
+			this.shieldcost = 10; //in getShieldcost
+			this.hp = 3; //max hp
+			this.model = 0; //todo: model to display on map
+			this.icon = 0; //todo: icon
+		}
+		if (this.name === "Settler") {
+			this.type = "settler";
+			this.atk = 0;
+			this.def = 0;
+			this.moves = 1; //moves allowed each turn
+			this.shieldcost = 30;
+			this.hp = 1; //max hp
+			this.model = 0; //todo: model to display on map
+			this.icon = 0; //todo: icon
+		}
+		if (this.name === "Worker") {
+			this.type = "worker";
+			this.atk = 0;
+			this.def = 0;
+			this.moves = 1; //moves allowed each turn
+			this.shieldcost = 10;
+			this.hp = 1; //max hp
+			this.model = 0; //todo: model to display on map
+			this.icon = 0; //todo: icon
+		}
+		this.hpleft = this.hp; //current hp
+		this.movesleft = this.moves; //moves remaining this turn
+		//this.x
+		//this.y
+  }
+	buildCity() {
+		if (0) { //todo: check if city location is valid
+			return;
+		}
+		else {
+			let _name = "new city zzz"; //todo: set city name here
+			let _newcity = new City(_name, this.civ, "Settler", this.x, this.y);
+			cities_map[this.y][this.x].push(_newcity);
+			civs[this.civ].cities.push(_newcity);
+			//delete unit			
+			let _ind = units_map[this.y][this.x].findIndex( object => {return object.id === unit_selected.id;} ) //get index of selected unit in array of units on selected tile;
+			units_map[this.y][this.x].splice(_ind, 1); //remove selected unit from tile
+			//remove unit from civ's units
+			let _ind2 = civs[this.civ].units.findIndex( object => {return object.id === unit_selected.id;} ) //get index of selected unit in array of units on selected tile;
+			civs[this.civ].units.splice(_ind2, 1); //remove selected unit from old tile
+		}
+	}
+}
+
+class City {
+  constructor(name, civ, making, x, y) {
+    this.id = next_city_id;
+		//location
+		this.x = x;
+		this.y = y;
+    next_city_id += 1;
+    this.name = name;
+    this.civ = civ; //number (civobject.id or civs[civ])
+
+		//resources
+    this.food = 0; //current food income, calculated in this.updateCity()
+    this.shields = 0; //current shield income
+    this.trade = 0; //current trade income
+		this.food_to_grow = 10;
+		this.shields_to_make = 10;
+		this.food_stored = 0;
+		this.shields_stored = 0;
+		this.corruption = 0;
+		//citizen stuff
+		this.population = 1;
+		this.happy = 0;
+		this.content = 1;
+		this.angry = 0;
+		this.entertainers = 0;
+		this.tiles_worked = [0,0,1,0,0,0,0,0]; //used in drawCitizens(), will be used to calculate resources from cities each turn
+		this.tiles_available = [1,1,1,1,1,1,1,1]; //same size as tiles_worked and tiles_adjacent, 1 for available, 0 for not available
+		//buildings and production
+		this.making = making;
+		this.buildings = []; //names of buildings in this city
+		this.production_list = ["Settler", "Worker", "Warrior", "Wealth"]; //stuff available to produce in this city
+	}
+  
+  citymenu(open,e=null) { //open=1 opens, open=0 closes; e is click event
+    if (open == 1) {
+      console.log("opening city menu for", this.name);
+			
+			let list = document.getElementById("cityactions");
+			list.innerHTML = "";
+			//add list elements to menu
+			let li = document.createElement("li");
+			li.innerText = "Assign Citizens";
+			li.setAttribute("onclick", "assignCitizens()");
+			list.appendChild(li);
+			let li2 = document.createElement("li");
+			li2.innerText = "Hurry Production";
+			li2.setAttribute("onclick", "HurryProduction()");
+			list.appendChild(li2);
+			for (let i=0; i<this.production_list.length; i++) {
+					let li = document.createElement("li");
+					li.innerText = this.production_list[i];
+					li.setAttribute("onclick", "setProduction(" + i + ")");
+					list.appendChild(li);
+			}
+			
+      let menu = document.getElementById("contextMenu");
+      menu.style.display = "block";
+      menu.style.left = e.pageX + "px";
+      menu.style.top = e.pageY + "px"; 
+		}
+    else {
+      console.log("closing city menu");
+      let menu = document.getElementById("contextMenu");
+      menu.style.display = "none";
+    }
+  }
+	
+	updateCity() { //update resources and happiness
+		//todo: update number of content, happy, angry citizens based on population and entertainers
+		this.content = this.population - this.entertainers;
+		//update resources
+		this.food = 0; this.shields = 0; this.trade = 0;
+		let tiles_adjacent = getAdjacentTiles(this.y, this.x);
+		let _offset = 0; let _x = 0; let _y = 0;
+		for (let i=0; i<this.tiles_worked.length; i++) {
+			if (this.tiles_worked[i] == 1) { //for every tile worked, add its resources
+				[_y, _x] = tiles_adjacent[i]; //get tile indices of worked tile
+				this.food += terrain_map[_y][_x].food;
+				this.shields += terrain_map[_y][_x].shields;
+				this.trade += terrain_map[_y][_x].trade;
+			}
+		}
+		this.shields_to_make = getShieldcost(this.making);
+	}
+	
+	updateTilesAvailable() {
+		for (let i=0; i<this.tiles_available.length; i++) {
+			//todo: check if tile is occupied by city or enemy unit
+			this.tiles_available[i] = 1;
+		}
+	}
+	
+	setProduction(n) {
+		console.log(this.production_list[n]);
+		this.making = this.production_list[n];
+		updateCityInfo(this);
+	}
+}
+
+class Civ {
+  constructor(id, rgb) {
+    this.id = id; //int
+    this.units = [];
+		this.cities = [];
+		this.r = rgb[0];
+		this.g = rgb[1];
+		this.b = rgb[2];
+		this.color = numToColor(this.r,this.g,this.b);
+  }
+	highlight() { //get highlighted civ color
+	let r = 1.3*this.r;
+	let g = 1.3*this.g;
+	let b = 1.3*this.b;
+	if (r > 255) {r = 255;}
+	if (g > 255) {g = 255;}
+	if (b > 255) {b = 255;}
+	return numToColor(r, g, b);
+	}
+}
+
+class Terrain {
+	constructor(id) {
+		switch (id) { //grassland
+			case 0:
+				this.food = 2;
+				this.shields = 0;
+				this.trade = 0;
+				this.can_mine = 1;
+				this.can_irrigate = 1;
+				this.can_chop = 0;
+				this.r = 80;
+				this.g = 255;
+				this.b = 40;
+				this.color = numToColor(this.r,this.g,this.b)
+				break;
+			case 1: //plains
+				this.food = 1;
+				this.shields = 1;
+				this.trade = 0;
+				this.can_mine = 1;
+				this.can_irrigate = 1;
+				this.can_chop = 0
+				this.r = 255;
+				this.g = 255;
+				this.b = 40;
+				this.color = numToColor(this.r,this.g,this.b)
+				break;
+			case 2: //mountain
+				this.food = 0;
+				this.shields = 2;
+				this.trade = 0;
+				this.can_mine = 1;
+				this.can_irrigate = 0;
+				this.can_chop = 0;
+				this.r = 100;
+				this.g = 80;
+				this.b = 80;
+				this.color = numToColor(this.r,this.g,this.b)
+				break;
+			case 3: //forest
+				this.food = 1;
+				this.shields = 2;
+				this.trade = 0;
+				this.can_mine = 0;
+				this.can_irrigate = 0;
+				this.can_chop = 1;
+				this.r = 70;
+				this.g = 150;
+				this.b = 40;
+				this.color = numToColor(this.r,this.g,this.b)
+		}
+		//improvements
+		this.mined = 0;
+		this.roaded = 0;
+		this.irrigated = 0;
+	}
+}
+
+//set up terrain array; todo: generate terrain
+const terrain_map = [];
+for (let y=0; y<numTilesY; y++) {
+  terrain_map.push([]);
+  for (let x=0; x<numTilesX+1; x++) {
+    terrain_map[y].push(new Terrain( randint(0,4) ));
+  }
+}
+
+
+//set up civs
+const civ0 = new Civ(0,[50,50,200]);
+const civ1 = new Civ(1,[200,50,50]);
+const civs = [civ0,civ1];
+
+//set up cities array
+const cities_map = [];
+for (let y=0; y<numTilesY; y++) {
+  cities_map.push([]);
+  for (let x=0; x<numTilesX+1; x++) {
+    cities_map[y].push([]);
+  }
+}
+//starting cities
+const c0 = new City("Buttzville", 0, "Settler", 7, 4);
+const c1 = new City("Clowntown", 1, "Settler", 2, 3);
+const c2 = new City("Test City", 0, "Settler", 24, 7);
+cities_map[c0.y][c0.x].push(c0); //[offset][y][x]
+civ0.cities.push(c0);
+cities_map[c1.y][c1.x].push(c1);
+civ1.cities.push(c1);
+cities_map[c2.y][c2.x].push(c2);
+civ0.cities.push(c2);
+
+//set up units array
+const units_map = [];
+for (let y=0; y<numTilesY; y++) {
+  units_map.push([]);
+  for (let x=0; x<numTilesX+1; x++) {
+    units_map[y].push([]); //array in each tile, will contain unit objects
+  }
+}
+//starting units
+const u0 = new Unit("Settler", 0);
+civ0.units.push(u0);
+units_map[6][12].push(u0);
+
+//constants
+const MOUSE_SELECT = 0;
+const MOUSE_MOVE = 1;
+const MOUSE_MENU = 2;
+const civ_PC = 0;
+
+var just_clicked = 0; //0 or 1
+var scroll_LR = 0; //-1, 0, 1
+var scroll_UD = 0; //-1, 0, 1
+var xClicked = 0; //x coordinate of canvas last clicked
+var yClicked = 0; //y coordinate of canvas last clicked
+var xSelected = -1; //x index of selected tile
+var ySelected = -1; //y index of selected tile
+var oSelected = -1; //selected tile offset index
+var unit_selected = {}; //selected Unit object
+var city_selected = {}; //selected City object
+var xSelected;
+var ySelected;
+var oSelected;
+var mouse_action = MOUSE_SELECT; //todo: chosen action to do on next click e.g. move/attack, bombard
+var city_window = 0;
+var cameraX = 0, cameraY = 0; //top left corner of camera (canvas coordinates)
+var ctr_xs = [], ctr_ys = [];
+var ctr_xs_offset = [], ctr_ys_offset = [];
+var background; //canvas image
+let img = new Image(); img.onload = function() {
+  ctx.drawImage(img,0,0);
+};
+
+//for framerate
+var filterStrength = 10;
+var frameTime = 0, lastLoop = new Date, thisLoop;
+
+//before looping, set arrays with center points
+var x0 = -32 - cameraX; //x coordinate of 1st tile, moves with camera
+var y0 = -32 - cameraY; //y coordinate of 1st tile, moves with camera
+
+//center of tiles start at x0 + 0.5*w, y0 + 0.5*w
+var ctr_x0 = x0 + 0.5*w;
+var ctr_y0 = y0 + 0.5*w;
+ctr_xs = []; //x coordinate of center of tiles, absolute coords
+ctr_xs_offset = [];
+ctr_ys = [];
+ctr_ys_offset = [];
+for (i = 0; i < numTilesX; i++) {
+  ctr_xs.push(ctr_x0 + 1.41*i*w);
+  ctr_xs_offset.push(ctr_x0 + 1.41*0.5*w + 1.41*i*w); //offset row
+}
+for (i = 0; i < numTilesY; i++) {
+  ctr_ys.push(ctr_y0 + 1.41*i*w);
+  ctr_ys_offset.push(ctr_y0 + 1.41*0.5*w + 1.41*i*w); //offset column
+}
+
+
+function drawRectRotated(_ctx,_x,_y,_w,_h,_deg) { //int, int, int, int, float, str
+  //draws rectangle at _x,_y rotated around its center by _deg
+  //_ctx.save(); //save ctx state
+  _ctx.translate(_x ,_y);
+  _ctx.rotate(0.01745*_deg); //rotate uses radians
+  _ctx.translate(-_x - _w*0.5, -_y - _h*0.5);
+  //_ctx.fillStyle = _color;
+  _ctx.fillRect(_x + _w*0.717,_y,_w,_h);
+  //_ctx.restore(); //load ctx state from last save
+  ctx.setTransform(1,0,0,1,0,0); //reset transformation matrix
+  return;
+}
+
+function drawRectRotatedColor(_ctx,_x,_y,_w,_h,_deg,_color) { //int, int, int, int, float, str
+  //draws rectangle at _x,_y rotated around its center by _deg
+  //_ctx.save(); //save ctx state
+  _ctx.translate(_x ,_y);
+  _ctx.rotate(0.01745*_deg);
+  _ctx.translate(-_x - _w*0.5, -_y - _h*0.5);
+  _ctx.fillStyle = _color;
+  _ctx.fillRect(_x + _w*0.717,_y,_w,_h);
+  //_ctx.restore(); //load ctx state from last save
+  ctx.setTransform(1,0,0,1,0,0); //reset transformation matrix
+  return;
+}
+
+function outlineRectRotated(_ctx,_x,_y,_w,_h,_deg,_color) { //int, int, int, int, float, str
+  //draws rectangle at _x,_y rotated around its center by _deg
+  //_ctx.save(); //save ctx state
+  _ctx.translate(_x ,_y);
+  _ctx.rotate(0.01745*_deg);
+  _ctx.translate(-_x - _w*0.5, -_y - _h*0.5);
+  _ctx.strokeStyle = _color;
+  _ctx.lineWidth = 6;
+  _ctx.rect(_x,_y,_w,_h);
+  _ctx.strokeRect(_x + _w*0.717,_y,_w,_h);
+  //_ctx.stroke();
+  //_ctx.restore(); //load ctx state from last save
+  ctx.setTransform(1,0,0,1,0,0); //reset transformation matrix
+  return;
+}
+
+function numToColor(_r,_g,_b) { //returns html color string from 3 numbers
+  return "rgb(" + Math.round(_r).toString() + "," + Math.round(_g).toString() + "," + Math.round(_b).toString() + ")";
+}
+
+function distance(_x1,_y1,_x2,_y2) { //pythagorean theorem
+  var _xdif = _x2 - _x1;
+  var _ydif = _y2 - _y1;
+  return Math.sqrt(_xdif*_xdif + _ydif*_ydif);
+}
+
+function getXWrapped(_x,_numTilesX) { //get actual x index of wrapped tile based on number of tiles in x, no global variables hopefully improves speed
+  if (_x < 0) {
+    return _numTilesX+_x;
+  }
+  else if (_x >= _numTilesX) {
+    return _x - _numTilesX;
+  }
+  else {
+    return _x;
+  }
+}
+
+function printMousePos(event) { //print canvas to log
+  var _rect = canvas.getBoundingClientRect();
+  console.log("clientX: " + (event.clientX - _rect.left) +
+    " - clientY: " + (event.clientY - _rect.top) );
+}
+
+function onLeftClick(event) {
+	leftclickevent = event;
+	leftclicked = 1;
+}
+
+function onRightClick(event) {
+	event.preventDefault(); //prevents the usual right click menu on a webpage
+	rightclickevent = event;
+	rightclicked = 1;
+}
+
+function click(event) { //left click to select unit or city
+	[_yi, _xi] = selectTile(event);  
+  if (mouse_action == 0) {
+    //if unit on tile, select unit
+    //console.log(units_map[_offset][_yi][_xi]);
+		if (city_window == 0) {
+			if (_yi >= 0 && units_map[_yi][_xi].length > 0) { //todo: check bounds?
+				unit_selected = units_map[_yi][_xi][0];
+				xSelected = _xi; ySelected = _yi;
+				console.log("Selected " + unit_selected.name + " (civ " + unit_selected.civ + ")" );
+			}
+			else {
+				unit_selected = {};
+			}
+			if (cities_map[_yi][_xi].length == 1) {
+				city_selected = cities_map[_yi][_xi][0];
+				xSelected = _xi; ySelected = _yi;
+				console.log("Selected " + city_selected.name + " (civ " + city_selected.civ + ")" );
+				city_selected.updateCity();
+				updateCityInfo(city_selected);
+			}
+			else {
+				if (city_selected != {}) {
+					let menu = document.getElementById("contextMenu");
+					if (menu.style.display != "none") {
+						console.log("closing city menu");
+						menu.style.display = "none";
+					}
+					city_selected = {};
+					updateCityInfo(0);
+				}
+			}
+		}
+		//if assigning citizens
+		if (city_window == 2) { //close menu before displaying city window stuff on next frame
+			city_window = 1;
+		}
+		else if (city_window == 1) {
+			let tiles_adjacent = getAdjacentTiles(city_selected.y, city_selected.x); //tiles adjacent to city
+			let _break = 0;
+			let _tileSelected = -1;
+			for (let i=0; i<tiles_adjacent.length; i++) {
+				if (tiles_adjacent[i][0] == _yi && tiles_adjacent[i][1] == _xi) {
+					_tileSelected = i;
+					break;
+				}
+				//city_selected.tiles_worked
+			}
+			if (_tileSelected > -1) { //tile adjacent to city has been clicked
+				if (city_selected.tiles_worked[_tileSelected] == 1) { //clicked tile is being worked by this city
+					city_selected.tiles_worked[_tileSelected] = 0; //set tile to not being worked
+					city_selected.entertainers += 1; //make entertainer
+					city_selected.updateCity();
+					updateCityInfo(city_selected);
+				}
+				else if (city_selected.tiles_available[_tileSelected] == 1) { //clicked tile is not being worked already and is available
+					if (city_selected.entertainers >= 1) {
+						city_selected.entertainers -= 1; //lose entertainer, work clicked tile
+						city_selected.tiles_worked[_tileSelected] = 1;
+						city_selected.updateCity();
+						updateCityInfo(city_selected);
+					}
+				}
+			}
+			else {city_window = 0; updateCityInfo(0);} //close city window if click outside of adjacent tiles; todo: make it more clear that you are in city window
+		}
+		
+  }
+
+}
+
+function isAdjacent(ySelected,xSelected,_y,_x) { //determines if (_y, _x) is adjacent to (ySelected, xSelected); todo: check if x is 0 or max
+  let adjacent_tiles = getAdjacentTiles(_y,_x);
+	for (let i=0; i<adjacent_tiles.length; i++) {
+		if (ySelected == adjacent_tiles[i][0] && xSelected == adjacent_tiles[i][1]) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
+function rightclick(event) {
+	//event.preventDefault(); //prevents the usual right click menu on a webpage
+	[_y,_x] = selectTile(event); //index of clicked tile
+	//if unit is selected, try to move to right-clicked tile
+	if ( ySelected >= 0 && unit_selected != {} ) { //if unit is on the left-clicked tile
+		if ( unit_selected.civ == civ_PC ) { //player can only move their own units, xSelected is of selected unit
+			if (unit_selected.movesleft < 1) {console.log("no moves left");} //if unit has no moves left
+			else {
+				if ( isAdjacent(ySelected,xSelected,_y,_x) ) { //only allow one tile at a time; todo: pathing over multiple moves
+					_ind = units_map[ySelected][xSelected].findIndex( object => {return object.id === unit_selected.id;} ) //get index of selected unit in array of units on selected tile;
+					units_map[ySelected][xSelected].splice(_ind, 1); //remove selected unit from old tile
+					units_map[_y][_x].push(unit_selected); //put unit at new tile
+					unit_selected.x = _x; unit_selected.y = _y; //update unit x,y position
+					unit_selected.movesleft -= 1; //decrease movement point; todo: take terrain into account
+				}
+			}
+		} 
+	}
+
+	if ( ySelected >= 0 && cities_map[ySelected][xSelected].length == 1 && Object.keys(city_selected).length > 0) { //if city is on the left-clicked tile
+		if ( cities_map[ySelected][xSelected][0].civ == civ_PC ) { //player can only do stuff with own city
+			cities_map[ySelected][xSelected][0].citymenu(1,event); //open city menu for right click anywhere
+		}
+	}
+
+	update_background = 1; //draw unit at new tile
+}
+
+function onKeydown(event) {
+	keypressedonce = event.key; //global
+}
+
+function selectTile(event) { //returns array with: x index of tile, y index of tile, whether tile is inline (1) or offset (0); requires some global vars: canvas, ctr_xs, ctr_ys, ctr_xs_offset, ctr_ys_offset
+  //todo: calculation of distance from center of tiles is not quite right
+	var _rect = canvas.getBoundingClientRect();
+  just_clicked = 1; //global
+  xClicked = event.clientX - _rect.left; //global
+  yClicked = event.clientY - _rect.top; //global
+	
+	//compare clicked coordinates to center of each tile on the screen, copied from code that draws tiles each loop
+	
+	let x0 = -cameraX - w/2;
+	let y0 = -cameraY - w/2;
+	let xstart = 0;
+	let xend = numTilesX;
+	if (wrapX == 1) { //scrolling to left or right will wrap back around to the other side
+    xstart = -30; //draw extra tiles in x so x wraps around. The camera will reset when you get to the end of the extra tiles on either side
+    xend = numTilesX + 1 + Math.round(canvas_width/(1.41*w));
+  }
+	
+	let color = numToColor(255, 255, 255);
+	let w2 = w*w;
+	const closest_dists = [];
+	const closest_xs = [];
+	const closest_ys = [];
+	for (let xi = xstart; xi < xend; xi++) {
+		let x = getXWrapped(xi, numTilesX); //x coordinate of tile in top row
+		for (let y = 0; y < numTilesY; y++) {
+			let _tileX = x0 + xi*w*1.41 + y*w*0.5*1.41;
+			let _tileY = y0 + y*w*0.5*1.41;
+			if (_tileX > -w*1.41 && _tileX < canvas_width+w*1.41 && _tileY > -w*1.41 && _tileY < canvas_height + w*1.41) { //only consider tiles on screen  
+				//drawRectRotatedColor(ctx, _tileX, _tileY, 4, 4, 0.0, color);
+				let xdist = (xClicked - _tileX)*(xClicked - _tileX);
+				let ydist = (yClicked - _tileY)*(yClicked - _tileY);
+				if (xdist < w2 && ydist < w2) {
+					closest_dists.push((xdist + ydist)**0.5);
+					closest_xs.push(x);
+					closest_ys.push(y);
+				}
+				
+			}
+		}
+	}
+	let dmin = w; //shortest distance so far
+	let imin = -1; //index of shortest distance so far
+	for (let i=0; i<closest_dists.length; i++) { //find smallest distance
+		if (closest_dists[i] < dmin) {
+			dmin = 0
+			imin = i;
+		}
+	}
+	console.log("Clicked tile (x,y): " + closest_xs[imin] + "," + closest_ys[imin]);
+
+  return [closest_ys[imin], closest_xs[imin]]; //[y,x] index of closest tile
+  //this array can be used for outlining selected tile, doing stuff to tile, or just getting indices of selected tile
+}
+
+function onMouseMove(event) { //scrolls screen when moused over edge
+  var scrollZone = 48; //number of pixels from edge to scroll
+  let _rect = canvas.getBoundingClientRect();
+  xMouse = event.clientX; // - _rect.left;
+  yMouse = event.clientY; // - _rect.top;
+  if (xMouse < _rect.left && xMouse > 4) { //if mouse is to left of canvas but not all the way at edge
+    scroll_LR = -1; //global
+  }
+  else if (xMouse > _rect.right && xMouse < _rect.right + scrollZone) {
+    scroll_LR = 1;
+  }
+  else {
+    scroll_LR = 0;
+  }
+  if (yMouse < _rect.top && yMouse > _rect.top - scrollZone) { //if mouse is to left of canvas
+    scroll_UD = -1; //global
+  }
+  else if (yMouse > _rect.bottom && yMouse < _rect.bottom + scrollZone/2) {
+    scroll_UD = 1;
+  }
+  else {
+    scroll_UD = 0;
+  }
+}
+
+function getAdjacentTiles(_y,_x) { //from tile index (y,x), get array of adjacent tiles, starting from NE -> clockwise; todo: make work for first or last tiles in x,y
+	_tilesAdjacent = [];
+	_tilesAdjacent.push([_y-1,_x+1]);
+	_tilesAdjacent.push([_y,_x+1]);
+	_tilesAdjacent.push([_y+1,_x]);
+	_tilesAdjacent.push([_y+2,_x-1]);
+	_tilesAdjacent.push([_y+1,_x-1]);
+	_tilesAdjacent.push([_y,_x-1]);
+	_tilesAdjacent.push([_y-1,_x]);
+	_tilesAdjacent.push([_y-2,_x+1]);
+	return _tilesAdjacent;
+}
+
+function setProduction(n) {
+	city_selected.setProduction(n);
+}
+
+function assignCitizens() {
+	city_selected.citymenu(0);
+	city_window = 2; //set to 1 after clicking on menu
+}
+
+function updateCityInfo(_city) { //_city is a City object; update the html to show city info
+	if (_city === 0) {
+		city_selected = {};
+		cityinfo.innerHTML = "No city selected";
+	}
+	else {
+		cityinfo.innerHTML = _city.name + "<br>" + "producing: " + _city.making + "<br> happy: " + _city.happy + ", content: " + _city.content + ", angry: " + _city.angry + ", entertainers: " + _city.entertainers + "<br> food: +" + _city.food + " (" + _city.food_stored + "/" + _city.food_to_grow + "), shields: +" + _city.shields + " (" + _city.shields_stored + "/" + _city.shields_to_make + "), trade: " + _city.trade;
+	}
+}
+
+function drawCitizens() {
+	//console.log(xSelected + ", " + ySelected);
+	const tiles_adjacent = getAdjacentTiles(ySelected, xSelected); //coordinates of available tiles (o,x,y)
+	let _foodvals = []; //same length of _tilesAvailable
+	let _shieldvals = [];
+	let _tradevals = [];
+	for (let i = 0; i < tiles_adjacent.length; i++) { //loop over adjacent tiles
+		let _x = tiles_adjacent[i][1];
+		let _y = tiles_adjacent[i][0];
+		_foodvals.push(terrain_map[_y][_x].food);
+		_shieldvals.push(terrain_map[_y][_x].shield);
+		_tradevals.push(terrain_map[_y][_x].trade);
+		
+		//draw stuff here
+		if (city_selected.tiles_available[i] == 0) { //tile not available gets black square
+			[_yScreen,_xScreen] = getScreenCoordsOfTile(_y,_x);
+			ctx.fillStyle = "black";
+			drawRectRotated(ctx, _xScreen + 0.2*w, _yScreen + w/2, w/4, w/4, 0.0)		
+		}
+		if (city_selected.tiles_worked[i] == 1) { //tile worked by this city gets blue square
+			[_yScreen,_xScreen] = getScreenCoordsOfTile(_y,_x);
+			ctx.fillStyle = "blue";
+			drawRectRotated(ctx, _xScreen + 0.2*w, _yScreen + w/2, w/4, w/4, 0.0)		
+		}
+	}
+	ctx.fillStyle = "green"; //reset fill color
+}
+
+function getScreenCoordsOfTile(y,xi) { //from tile index, get center of tile in screen coords for drawing
+	//todo: handle high x when wrapped around to low x
+	let _tileX = x0 + xi*w*1.41 + y*w*0.5*1.41 - cameraX;
+	let _tileY = y0 + y*w*0.5*1.41 - cameraY;	
+	console.log(_tileX, _tileY);
+	return [_tileY,_tileX];
+}
+
+function endTurn(_civ) { //end turn for _civ
+  //unselect unit and city
+	updateCityInfo(0);
+	for (let i = 0; i < _civ.units.length; i++) { //loop over civ's units
+    _civ.units[i].movesleft = _civ.units[i].moves; //reset unit moves
+  }
+	for (let i = 0; i < _civ.cities.length; i++) { //loop over civ's cities
+		_civ.cities[i].updateCity();
+		_civ.cities[i].shields_stored += _civ.cities[i].shields;
+		//make stuff with shields
+		if (_civ.cities[i].shields_stored >= _civ.cities[i].shields_to_make) {
+			//create unit
+			switch (getMakingType(_civ.cities[i].making)) {
+				case "military_land":
+				case "military_water":
+				case "settler":
+				case "worker":
+					let _newunit = new Unit(_civ.cities[i].making, _civ.id);
+					units_map[_civ.cities[i].y][_civ.cities[i].x].push(_newunit)
+					_civ.units.push(_newunit)
+					break;
+				case "building":
+					_civ.cities[i].buildings.push(_civ.cities[i].making);
+					break;
+				case "wonder":
+					_civ.cities[i].wonders.push(_civ.cities[i].making);
+					break
+			}
+			_civ.cities[i].shields_stored = 0;
+		}
+		
+		_civ.cities[i].food_stored += _civ.cities[i].food;
+		//todo: grow city with food
+		
+		//todo: gold, science from trade
+	
+	}
+	turn += 1;
+	turninfo.innerHTML = "Turn: " + turn;
+}
+
+function getMakingType(_string) { //is thing being made by city a unit, building, wonder, etc?
+	if (_string === "Settler") {return "settler";}
+	if (_string === "Worker") {return "worker";}
+	if (_string === "Wealth") {return "wealth";}
+	//units
+	if ( ["Warrior", "Archer", "Chariot", "Horseman"].includes(_string) ) {
+		return "military_land";
+	}
+	if ( ["Temple", "Barracks"].includes(_string) ) {
+		return "building";
+	}
+	if ( ["Pyramids"].includes(_string) ) {
+		return "wonder";
+	}
+}
+
+function getShieldcost(_string) {
+	if (_string === "Settler") {return 30;}
+	if (_string === "Worker") {return 10;}
+	if (_string === "Warrior") {return 10;}
+	if (_string === "Wealth") {return 0;}
+}
+
+
+function loop() {
+update_background = 1;
+
+//check camera bounds
+if (wrapX == 1) { //if wrapping around x, jump camera to other side of map when it reaches one end
+  if (cameraX < -canvas_width) {
+    cameraX = cameraX + 1.41*w*numTilesX; //move camera to less than canvas_width
+  }
+  else if (cameraX > 0.5*w + 1.41*w*numTilesX) { //move camera to greater than -canvas_width
+    cameraX = cameraX - 1.41*w*numTilesX;
+ }
+}
+else { //if not wrapping around x, stop camera from scrolling when too far off map
+  if (cameraX < -1.41*w) {
+    cameraX = -1.41*w;
+    scroll_LR = 0;
+  }
+  else if (cameraX > (1+numTilesX)*1.41*w - canvas_width) {
+    cameraX = (1+numTilesX)*1.41*w - canvas_width;
+    scroll_LR = 0;
+  }
+}
+//prevent camera from moving too far in y
+if (cameraY < -1.41*w) {
+  cameraY = -1.41*w;
+  scroll_UD = 0;
+}
+else if (cameraY > 0.5*(1+numTilesY)*1.41*w - canvas_height) {
+  cameraY = 0.5*((1+numTilesY)*1.41*w) - canvas_height;
+  scroll_UD = 0;
+}
+
+
+
+if (scroll_LR != 0) {
+  cameraX += scroll_rate*scroll_LR;
+  update_background = 1;
+}
+if (scroll_UD != 0) {
+  cameraY += scroll_rate*scroll_UD;
+  update_background = 1;
+}
+
+var x0 = -32 - cameraX; //x coordinate of 1st tile, moves with camera
+var y0 = -32 - cameraY; //y coordinate of 1st tile, moves with camera
+
+//do stuff for keypresses
+if (keypressedonce === "b") {
+	if (unit_selected.type === "settler" && unit_selected.movesleft >= 1) {
+		unit_selected.buildCity();
+	}
+}
+//after stuff is done, reset variable
+keypressedonce = "none";
+
+//do stuff for left click
+if (leftclicked) {
+	click(leftclickevent); //function onLeftClick sets leftclickevent and leftclicked (1 if clicked)
+}
+//after stuff is done, reset variable
+leftclicked = 0;
+
+//do stuff for right click
+if (rightclicked) {
+	rightclick(rightclickevent); //function onLeftClick sets leftclickevent and leftclicked (1 if clicked)
+}
+//after stuff is done, reset variable
+rightclicked = 0;
+
+//draw tiles, only if background changed
+if (update_background == 1) {
+
+  //center of tiles start at x0 + 0.5*w, y0 + 0.5*w
+  ctr_x0 = x0 + 0.5*w;
+  ctr_y0 = y0 + 0.5*w;
+  for (let i = 0; i < numTilesX; i++) {
+    ctr_xs[i] = ctr_x0 + 1.41*i*w;
+  }
+  //for (let i = 0; i < numTilesY; i++) {
+  //  ctr_ys[i] = ctr_y0 + 1.41*i*w;
+  //}
+
+  var xstart = 0
+  var xend = numTilesX
+  if (wrapX == 1) { //scrolling to left or right will wrap back around to the other side
+    xstart = -30; //draw extra tiles in x so x wraps around. The camera will reset when you get to the end of the extra tiles on either side
+    xend = numTilesX + 1 + Math.round(canvas_width/(1.41*w));
+  }
+
+  ctx.clearRect(0, 0, canvas_width, canvas_height);
+  
+  //draw rectangle in back
+  //ctx.fillStyle = "red";
+  //ctx.fillRect(10,10,25,40); //temp
+  //ctx.fill(); //temp
+  
+  //ctx.fillStyle = "green";
+	for (let xi = xstart; xi < xend; xi++) {
+		let x = getXWrapped(xi, numTilesX); //x coordinate of tile in top row
+		let xcolor = 255*(x/numTilesX);
+		for (let y = 0; y < numTilesY; y++) {
+			//let ycolor = 255*(y/numTilesY);
+			//var color = numToColor(ycolor, xcolor, 40);
+			let _tileX = x0 + xi*w*1.41 + y*w*0.5*1.41;
+			let _tileY = y0 + y*w*0.5*1.41;
+			if (_tileX > -w*1.41 && _tileX < canvas_width+w*1.41 && _tileY > -w*1.41 && _tileY < canvas_height + w*1.41) { //only draw tiles on screen  
+        
+				//shade tiles outside city if in city window
+				if (city_window == 1) {
+					if ( !isAdjacent(city_selected.y, city_selected.x, y, x) ) {
+						drawRectRotatedColor(ctx, _tileX, _tileY, w, w, 45.0, numToColor(terrain_map[y][x].r/5, terrain_map[y][x].g/5, terrain_map[y][x].b/5) );
+					}
+					else {
+						drawRectRotatedColor(ctx, _tileX, _tileY, w, w, 45.0, terrain_map[y][x].color );
+					}
+				}			
+				else { //draw normally
+					drawRectRotatedColor(ctx, _tileX, _tileY, w, w, 45.0, terrain_map[y][x].color );
+				}
+				
+				//draw tile, colored by terrain type
+				//drawRectRotatedColor(ctx, _tileX, _tileY, w, w, 45.0, terrain_map[y][x].color);
+        //drawRectRotated(ctx, _tileX, _tileY, w, w, 45.0);
+        
+				//draw city - todo: draw cities and units after all terrain in separate loop using their x,y coordinates instead of cities_map[y][x]
+        if (cities_map[y][x].length > 0) {
+          if (cities_map[y][x][0] === city_selected ) {
+						ctx.fillStyle = civs[city_selected.civ].highlight();
+					}
+					else {
+						ctx.fillStyle = civs[cities_map[y][x][0].civ].color;
+					}
+					drawRectRotated(ctx, _tileX + 0.2*w + w/2, _tileY + w/4, w/4, w/2, 15.0);
+					ctx.fillStyle = "black";
+					drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/2, w/2, 0.0);
+          ctx.fillStyle = "white"; //reset fill color
+					//label city with name
+					ctx.font = "16px Arial";
+					ctx.fillText(cities_map[y][x][0].name, _tileX, _tileY);
+        }
+        //draw unit
+        if (units_map[y][x].length > 0) { //if units_map array at tile has units in it, draw
+					//highlight selected unit
+					if (units_map[y][x][0] === unit_selected ) {
+						ctx.fillStyle = civs[unit_selected.civ].highlight();
+					}
+					else { //if not selected, draw normally
+						ctx.fillStyle = civs[units_map[y][x][0].civ].color;
+					}
+          drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/4, w/4, 0.0);
+          ctx.fillStyle = "green"; //reset fill color
+        }      
+      }
+		}
+	}
+	
+	
+  
+	//city window
+	if (city_selected === {}) {
+		city_window = 0;
+	}
+	if (city_window == 1) {
+		drawCitizens();
+	}
+  
+  //save background
+  background = canvas.toDataURL()
+}
+else { //draw saved background
+  img.src = background;
+}
+
+//framerate
+var thisFrameTime = (thisLoop=new Date) - lastLoop;
+frameTime += (thisFrameTime - frameTime) / filterStrength;
+lastLoop = thisLoop;
+
+
+/*
+//center dots
+for (y = 0; y < 6; y++) {
+  for (x = 0; x < 8; x++) {
+    //center coordinate of each tile
+    var centers = [x0 + 0.5*w + 1.41*x*w, y0 + 0.5*w + 1.41*y*w];
+    ctx.fillStyle = "blue";
+    ctx.fillRect(x0 + 0.5*w + 1.41*x*w,y0 + 0.5*w + 1.41*y*w,4,4);
+  }
+}
+//center dots, offset
+for (y = 0; y < 6; y++) {
+  for (x = 0; x < 8; x++) {
+    //center coordinate of each tile 
+    var centers_offset = [x0 + 0.5*w + 1.41*0.5*w + x*w*1.41, y0 + 0.5*w + 1.41*0.5*w + y*w*1.41];
+    ctx.fillStyle = "purple";
+    ctx.fillRect(x0 + 0.5*w + 1.41*0.5*w + x*w*1.41, y0 + 0.5*w + 1.41*0.5*w + y*w*1.41,4,4);
+  }
+*/
+
+
+update_background = 0;
+
+}
+
+
+//document.addEventListener("click", selectTile);
+document.addEventListener("click", onLeftClick);
+document.addEventListener('contextmenu', onRightClick);
+document.addEventListener("mousemove", onMouseMove);
+document.addEventListener("focusout", (event) => {scroll_LR = 0; scroll_UD = 0}); //when not focused on this page, don't scroll
+document.addEventListener("keydown", onKeydown);
+//game loop
+setInterval(loop,30); //run game loop every 30 ms
+
+
+
+setInterval(function(){ //update fps text every 1000 ms
+  fpsOut.innerHTML = (1000/frameTime).toFixed(1) + " fps";
+},1000);
+
+
+//todo: city right-click menu - list available production and switch to when clicked (use onclick functions in the html, set the number of list elements based on available units)
+//todo: in cities array, store more info than just 0 or 1 (store city object, also keep array of cities for each civ like for units)
+//todo: city production
+//todo: terrain array like cities array, color tiles by terrain type, terrain generation
+//todo: function for calculating screen position of a tile (for animations)
+
+</script>
