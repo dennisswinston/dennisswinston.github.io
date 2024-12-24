@@ -1170,6 +1170,7 @@ function recolorModel(_model, _civ) {
 		
 		let img = document.createElement("img");
 		img.id = _model.id + _civ.id; 
+		console.log(img.id);
 		//console.log(_model.id + _civ.id);
 		//let img = document.getElementById(_model.id + _civ.id);
 		img.src = srcCanvas.toDataURL();
