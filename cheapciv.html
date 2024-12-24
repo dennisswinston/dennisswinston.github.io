@@ -1038,9 +1038,8 @@ function drawCitizens() {
 	city_selected.updateCity();
 	updateCityInfo(city_selected);
 	
-	console.log(city_selected.tiles_worked);
-	
 	const tiles_adjacent = getAdjacentTiles(city_selected.y, city_selected.x); //coordinates of available tiles (o,x,y)
+	console.log(tiles_adjacent);
 	let _foodvals = []; //same length of _tilesAvailable
 	let _shieldvals = [];
 	let _tradevals = [];
