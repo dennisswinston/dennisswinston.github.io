@@ -732,6 +732,9 @@ function rightclick(event) {
 	//event.preventDefault(); //prevents the usual right click menu on a webpage
 	[_y,_x] = selectTile(event); //index of clicked tile
 	//if unit is selected, try to move to right-clicked tile
+	if (unit_selected == {}) { //if no unit is selected
+		showUnitsOnTile(_y,_x); //show all units on tile
+	}
 	if ( ySelected >= 0 && unit_selected != {} ) { //if unit is on the left-clicked tile
 		if ( unit_selected.civ == civ_PC ) { //player can only move their own units, xSelected is of selected unit
 			if (unit_selected.movesleft < 1) {console.log("no moves left");} //if unit has no moves left
@@ -885,6 +888,26 @@ function getAdjacentTiles(_y,_x) { //from tile index (y,x), get array of adjacen
 	_tilesAdjacent.push([_y-1,_x]);
 	_tilesAdjacent.push([_y-2,_x+1]);
 	return _tilesAdjacent;
+}
+
+function showUnitsOnTile(_y,_x) {
+	console.log("opening city menu for", this.name);
+	
+	let list = document.getElementById("unitsontile");
+	list.innerHTML = "";
+	//add list elements to menu
+	for (let i=0; i<units_map[_y][_x].length; i++) {
+			let li = document.createElement("li");
+			let _unit = units_map[_y][_x][i];
+			li.innerText = _unit.name;
+			li.setAttribute("onclick", "selectUnit(" + _unit + ")");
+			list.appendChild(li);
+	}
+	
+	let menu = document.getElementById("contextMenu");
+	menu.style.display = "block";
+	menu.style.left = e.pageX + "px";
+	menu.style.top = e.pageY + "px"; 
 }
 
 function setProduction(n) {
