@@ -34,6 +34,7 @@
 				
 		<img id="model_Settler" src="images/test.bmp" hidden="hidden">
 		<img id="model_Warrior" src="images/model_Warrior.png" hidden="hidden">
+		<img id="new_img" hidden="hidden">
 
 </head>
 
@@ -1067,6 +1068,9 @@ if (update_background == 1) {
 
 					// write pixel data to destination context
 					ctx.putImageData(pixels, _tileX + 0.1*w, _tileY);
+					
+					var img = document.getElementById("new_img");
+					img.src = srcCanvas.toDataURL();
 			
 					//ctx.drawImage(model_Warrior,_tileX + 0.1*w, _tileY);
 					//ctx.fillStyle = "green"; //reset fill color
