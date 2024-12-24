@@ -916,7 +916,7 @@ function unitsmenu(open, _y=-1, _x=-1, e=null) {
 			let li = document.createElement("li");
 			let _unit = units_map[_y][_x][i];
 			li.innerText = _unit.name;
-			li.setAttribute("onclick", "selectUnit(" + _unit + ")");
+			li.setAttribute("onclick", "selectUnit(" + _y + "," + _x + "," + i + ")");
 			list.appendChild(li);
 		}
 		
@@ -932,7 +932,8 @@ function unitsmenu(open, _y=-1, _x=-1, e=null) {
 	}
 }
 
-function selectUnit(_unit) { //argument must be Unit object
+function selectUnit(_y, _x, i) {
+	let _unit = units_map[_y][_x][i];
 	console.log(_unit.name);
 	unit_selected = _unit; //global
 }
