@@ -63,6 +63,11 @@
     </ul>
 </div>
 
+<div id="contextMenu_units" class="context-menu" style="display:none">
+    <ul id="unitsontile">
+    </ul>
+</div>
+
 <script>
 //select unit: left click
 //move unit: right click (to adjacent tile only)
@@ -904,7 +909,7 @@ function showUnitsOnTile(_y,_x) {
 			list.appendChild(li);
 	}
 	
-	let menu = document.getElementById("contextMenu");
+	let menu = document.getElementById("contextMenu_units");
 	menu.style.display = "block";
 	menu.style.left = e.pageX + "px";
 	menu.style.top = e.pageY + "px"; 
