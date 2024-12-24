@@ -38,7 +38,7 @@
 </head>
 
 <body>
-<p id="fps">Change text herex.</p>
+<p id="fps">Change text here.2</p>
 </body>
 
 <canvas id="canvas" width="680" height="480" style="border:1px solid #000000; position:relative; left:24px; top:24px;"></canvas>
@@ -1030,11 +1030,15 @@ if (update_background == 1) {
 					let ctx_temp = canvas_temp.getContext('2d');
 					
 					let _model = units_map[y][x][0].model;
+					
+					/*
 					canvas_temp.width = _model.width;
 					canvas_temp.height = _model.height;
 					ctx_temp.globalCompositeOperation = "source-over";
 					ctx_temp.drawImage(_model, 0, 0 );
-					var imgd = ctx_temp.getImageData(0,0,48,48),
+					*/
+					
+					var imgd = _model.getImageData(0,0,48,48),
 										
 					pix = imgd.data;
 
@@ -1049,7 +1053,6 @@ if (update_background == 1) {
 								pix[i+2] = civs[units_map[y][x][0].civ].b;
 						}
 					}
-					
 					
 					ctx.globalCompositeOperation = "source-over";
           ctx.drawImage(imgd,_tileX + 0.1*w,_tileY);
