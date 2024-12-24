@@ -1035,7 +1035,7 @@ function updateCityInfo(_city) { //_city is a City object; update the html to sh
 
 function drawCitizens() {
 	//console.log(xSelected + ", " + ySelected);
-	const tiles_adjacent = getAdjacentTiles(ySelected, xSelected); //coordinates of available tiles (o,x,y)
+	const tiles_adjacent = getAdjacentTiles(city_selected.y, city_selected.x); //coordinates of available tiles (o,x,y)
 	let _foodvals = []; //same length of _tilesAvailable
 	let _shieldvals = [];
 	let _tradevals = [];
