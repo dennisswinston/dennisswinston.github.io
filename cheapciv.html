@@ -106,6 +106,8 @@ var leftclicked = 0;
 var rightclickevent;
 var rightclicked = 0;
 var just_used_units_menu = 0;
+var mouseover_x = -1;
+var mouseover_y = -1;
 
 function randint(min,max) {
 	return Math.floor(Math.random() * (max - min) + min);
@@ -854,7 +856,7 @@ function selectTile(event) { //returns array with: x index of tile, y index of t
 			imin = i;
 		}
 	}
-	console.log("Clicked tile (x,y): " + closest_xs[imin] + "," + closest_ys[imin]);
+	//console.log("Clicked tile (x,y): " + closest_xs[imin] + "," + closest_ys[imin]);
 
   return [closest_ys[imin], closest_xs[imin]]; //[y,x] index of closest tile
   //this array can be used for outlining selected tile, doing stuff to tile, or just getting indices of selected tile
@@ -885,11 +887,11 @@ function onMouseMove(event) { //scrolls screen when moused over edge
   }
 	
 	//get tile being moused over
-	[_yi,_xi] = selectTile(event);
-	
-	//highlight tile
-	
-	
+	[mouseover_y_new,mouseover_x_new] = selectTile(event);
+	if (mouseover_y_new != mouseover_y && mouseover_x_new != mouseover_x) {
+		mouseover_y = mouseover_y_new; mouseover_x = mouseover_x_new;
+		update_background = 1;
+	}
 }
 
 function getMoveAction(_y,_x,_civid) { //check if tile (_y,_x) can be moved to by a unit from civ _civid
@@ -1213,6 +1215,11 @@ if (update_background == 1) {
 				}			
 				else { //draw normally
 					drawRectRotatedColor(ctx, _tileX, _tileY, w, w, 45.0, terrain_map[y][x].color );
+				}
+				
+				//highlight moused over tile
+				if (_tileX === mouseover_x && _tileY === mouseover_y) {
+					drawRectRotatedColor(ctx, _tileX, _tileY, 4, 4, 0.0, color);
 				}
 				
 				//draw tile, colored by terrain type
