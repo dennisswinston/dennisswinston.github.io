@@ -517,6 +517,11 @@ u1.x = 13; u1.y = 6;
 civs[u1.civ].units.push(u1);
 units_map[u1.y][u1.x].push(u1);
 
+const u2 = new Unit("Settler", 2);
+u2.x = 13; u2.y = 5;
+civs[u2.civ].units.push(u2);
+units_map[u2.y][u2.x].push(u2);
+
 //constants
 const MOUSE_SELECT = 0;
 const MOUSE_MOVE = 1;
