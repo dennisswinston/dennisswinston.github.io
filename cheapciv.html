@@ -971,22 +971,7 @@ if (update_background == 1) {
 				//drawRectRotatedColor(ctx, _tileX, _tileY, w, w, 45.0, terrain_map[y][x].color);
         //drawRectRotated(ctx, _tileX, _tileY, w, w, 45.0);
         
-				//draw city - todo: draw cities and units after all terrain in separate loop using their x,y coordinates instead of cities_map[y][x]
-        if (cities_map[y][x].length > 0) {
-          if (cities_map[y][x][0] === city_selected ) {
-						ctx.fillStyle = civs[city_selected.civ].highlight();
-					}
-					else {
-						ctx.fillStyle = civs[cities_map[y][x][0].civ].color;
-					}
-					drawRectRotated(ctx, _tileX + 0.2*w + w/2, _tileY + w/4, w/4, w/2, 15.0);
-					ctx.fillStyle = "black";
-					drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/2, w/2, 0.0);
-          ctx.fillStyle = "white"; //reset fill color
-					//label city with name
-					ctx.font = "16px Arial";
-					ctx.fillText(cities_map[y][x][0].name, _tileX, _tileY);
-        }
+
         //draw unit
         if (units_map[y][x].length > 0) { //if units_map array at tile has units in it, draw
 					//highlight selected unit
@@ -1034,7 +1019,33 @@ if (update_background == 1) {
 		}
 	}
 	
-	
+	//loop again and draw cities
+	for (let xi = xstart; xi < xend; xi++) {
+	let x = getXWrapped(xi, numTilesX); //x coordinate of tile in top row
+		for (let y = 0; y < numTilesY; y++) {
+			let _tileX = x0 + xi*w*1.41 + y*w*0.5*1.41;
+			let _tileY = y0 + y*w*0.5*1.41;
+			if (_tileX > -w*1.41 && _tileX < canvas_width+w*1.41 && _tileY > -w*1.41 && _tileY < canvas_height + w*1.41) { //only draw tiles on screen  
+        
+					//draw city - todo: draw cities and units after all terrain in separate loop using their x,y coordinates instead of cities_map[y][x]
+				if (cities_map[y][x].length > 0) {
+					if (cities_map[y][x][0] === city_selected ) {
+						ctx.fillStyle = civs[city_selected.civ].highlight();
+					}
+					else {
+						ctx.fillStyle = civs[cities_map[y][x][0].civ].color;
+					}
+					drawRectRotated(ctx, _tileX + 0.2*w + w/2, _tileY + w/4, w/4, w/2, 15.0);
+					ctx.fillStyle = "black";
+					drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/2, w/2, 0.0);
+					ctx.fillStyle = "white"; //reset fill color
+					//label city with name
+					ctx.font = "16px Arial";
+					ctx.fillText(cities_map[y][x][0].name, _tileX, _tileY);
+				}
+			}
+		}
+	}
   
 	//city window
 	if (city_selected === {}) {
