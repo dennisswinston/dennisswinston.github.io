@@ -65,6 +65,7 @@
 
 <div id="contextMenu_units" class="context-menu" style="display:none">
     <ul id="unitsontile">
+			<li><a onclick="selectUnit()">unitsmenu placeholder</a></li>
     </ul>
 </div>
 
@@ -929,6 +930,10 @@ function unitsmenu(open, e=null) {
 		let menu = document.getElementById("contextMenu_units");
 		menu.style.display = "none";
 	}
+}
+
+function selectUnit(_unit) { //argument must be Unit object
+	unit_selected = _unit; //global
 }
 
 function showUnitsOnTile(_y,_x, e) {
