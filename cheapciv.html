@@ -888,6 +888,7 @@ function onMouseMove(event) { //scrolls screen when moused over edge
 	
 	//get tile being moused over
 	[mouseover_y_new,mouseover_x_new] = selectTile(event);
+	console.log(mouseover_x_new, mouseover_y_new);
 	if (mouseover_y_new != mouseover_y && mouseover_x_new != mouseover_x) {
 		mouseover_y = mouseover_y_new; mouseover_x = mouseover_x_new;
 		update_background = 1;
@@ -1219,6 +1220,7 @@ if (update_background == 1) {
 				
 				//outline moused over tile
 				if (x === mouseover_x && y === mouseover_y) {
+					console.log(x,y);
 					outlineRectRotated(ctx, _tileX, _tileY, w, w, 45.0, "white");
 				}
    
