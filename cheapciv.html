@@ -666,6 +666,7 @@ function onRightClick(event) {
 function click(event) { //left click to select unit or city
 	[_yi, _xi] = selectTile(event); 
 	unitsmenu(0); //close unitsmenu on left click
+	if (just_used_units_menu) {just_used_units_menu = 0; return;} //left click disabled when exiting unit menu to avoid unselecting the unit you just selected
   if (mouse_action == 0) {
     //if unit on tile, select unit
     //console.log(units_map[_offset][_yi][_xi]);
@@ -936,6 +937,7 @@ function selectUnit(_y, _x, i) {
 	let _unit = units_map[_y][_x][i];
 	console.log(_unit.name);
 	unit_selected = _unit; //global
+	just_used_units_menu = 1; //after clicking on units menu, disable other click actions on same frame
 }
 
 function showUnitsOnTile(_y,_x, e) {
