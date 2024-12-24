@@ -888,10 +888,8 @@ function onMouseMove(event) { //scrolls screen when moused over edge
 	
 	//get tile being moused over
 	[mouseover_y_new,mouseover_x_new] = selectTile(event);
-	console.log(mouseover_y_new);
 	if (mouseover_y_new != mouseover_y && mouseover_x_new != mouseover_x) {
 		mouseover_y = mouseover_y_new; mouseover_x = mouseover_x_new;
-		update_background = 1;
 	}
 }
 
