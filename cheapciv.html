@@ -753,6 +753,8 @@ function rightclick(event) { //todo: instead of adding items to menu for unit st
 	//if unit is selected, try to move to right-clicked tile
 	if (Object.keys(unit_selected).length === 0 || ( (unit_selected.x === _x && unit_selected.y === _y) && cities_map[_y][_x].length === 0 ) ) { //if no unit selected or right clicked on selected unit (if no city on tile)
 		showUnitsOnTile(_y,_x, event); //show all units on tile
+		update_background = 1; //update background to show selected unit on top
+		return;
 	}
 	if ( ySelected >= 0 && unit_selected != {} ) { //if unit is on the left-clicked tile
 		if ( unit_selected.civ == civ_PC ) { //player can only move their own units, xSelected is of selected unit
@@ -767,24 +769,25 @@ function rightclick(event) { //todo: instead of adding items to menu for unit st
 						units_map[_y][_x].push(unit_selected); //put unit at new tile
 						unit_selected.x = _x; unit_selected.y = _y; //update unit x,y position
 						unit_selected.movesleft -= 1; //decrease movement point; todo: take terrain into account
+						update_background = 1; //draw unit at new tile
 					}
 					else if ( _moveaction == 2 ) { //attack
 						console.log("fighting not implemented yet");
 					}
 				}
 			}
-		} 
+		}
+		return;
 	}
 
-	if ( ySelected >= 0 && cities_map[ySelected][xSelected].length == 1 && Object.keys(city_selected).length > 0) { //if city is on the left-clicked tile
+	if ( ySelected >= 0 && cities_map[ySelected][xSelected].length == 1 ) { //if city is on the right-clicked tile ( to check for city selected: Object.keys(city_selected).length > 0 )
 		if ( cities_map[ySelected][xSelected][0].civ == civ_PC ) { //player can only do stuff with own city
 			if ( _y == ySelected && _x == xSelected) {
 				cities_map[ySelected][xSelected][0].citymenu(1,event); //open city menu for right click on same tile
 			}
 		}
+		return;
 	}
-
-	update_background = 1; //draw unit at new tile
 }
 
 function onKeydown(event) {
