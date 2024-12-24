@@ -1018,64 +1018,65 @@ if (update_background == 1) {
 						ctx.fillStyle = civs[unit_selected.civ].highlight();
 					}
 					else { //if not selected, draw normally
-						ctx.fillStyle = civs[units_map[y][x][0].civ].color;
+						//ctx.fillStyle = civs[units_map[y][x][0].civ].color;
+						
+						//drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/4, w/4, 0.0);
+						
+
+						//change some pixel values to get different colors
+						//todo: create hidden image elements for each unit when civs are created
+						
+						//set r, b ==255 to transparent
+
+						let _model = units_map[y][x][0].model;
+						
+						// create a destination canvas. Here the altered image will be placed
+						//var dstCanvas = document.createElement("canvas");
+						//dstCanvas.width = _model.width;
+						//dstCanvas.height = _model.height;
+
+						// append the canvas elements to the container
+						//document.getElementById('container').appendChild(srcCanvas);
+						//document.getElementById('container').appendChild(dstCanvas);
+
+						// get context to work with
+						var srcCanvas = document.createElement("canvas");
+						srcCanvas.width = _model.width;
+						srcCanvas.height = _model.height;
+						var srcContext = srcCanvas.getContext("2d");
+						//var dstContext = dstCanvas.getContext("2d");
+
+						// draw the loaded image on the source canvas
+						srcContext.drawImage(_model, 0, 0);
+
+						// read pixels from source
+						var pixels = srcContext.getImageData(0, 0, _model.width, _model.height);
+
+						// iterate through pixel data (1 pixels consists of 4 ints in the array)
+						for(var i = 0, len = pixels.data.length; i < len; i += 4){
+								var r = pixels.data[i];
+								var g = pixels.data[i+1];
+								var b = pixels.data[i+2];
+
+								// if the pixel matches color, set alpha to 0
+								if(r == 255 && g == 0 && b == 255){
+										pixels.data[i] = civs[units_map[y][x][0].civ].r;
+										pixels.data[i+1] = civs[units_map[y][x][0].civ].g;
+										pixels.data[i+2] = civs[units_map[y][x][0].civ].b;
+								}
+						}
+
+						// write pixel data to destination context
+						srcContext.putImageData(pixels, 0, 0);
+						
+						var img = document.getElementById("new_img");
+						img.src = srcCanvas.toDataURL();
+						
+						ctx.drawImage(img, _tileX + 0.1*w, _tileY);
+				
+						//ctx.drawImage(model_Warrior,_tileX + 0.1*w, _tileY);
+						//ctx.fillStyle = "green"; //reset fill color
 					}
-          //drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/4, w/4, 0.0);
-					
-
-					//change some pixel values to get different colors
-					//todo: create hidden image elements for each unit when civs are created
-					
-					//set r, b ==255 to transparent
-
-					let _model = units_map[y][x][0].model;
-					
-					// create a destination canvas. Here the altered image will be placed
-					//var dstCanvas = document.createElement("canvas");
-					//dstCanvas.width = _model.width;
-					//dstCanvas.height = _model.height;
-
-					// append the canvas elements to the container
-					//document.getElementById('container').appendChild(srcCanvas);
-					//document.getElementById('container').appendChild(dstCanvas);
-
-					// get context to work with
-					var srcCanvas = document.createElement("canvas");
-					srcCanvas.width = _model.width;
-					srcCanvas.height = _model.height;
-					var srcContext = srcCanvas.getContext("2d");
-					//var dstContext = dstCanvas.getContext("2d");
-
-					// draw the loaded image on the source canvas
-					srcContext.drawImage(_model, 0, 0);
-
-					// read pixels from source
-					var pixels = srcContext.getImageData(0, 0, _model.width, _model.height);
-
-					// iterate through pixel data (1 pixels consists of 4 ints in the array)
-					for(var i = 0, len = pixels.data.length; i < len; i += 4){
-							var r = pixels.data[i];
-							var g = pixels.data[i+1];
-							var b = pixels.data[i+2];
-
-							// if the pixel matches color, set alpha to 0
-							if(r == 255 && g == 0 && b == 255){
-									pixels.data[i] = civs[units_map[y][x][0].civ].r;
-									pixels.data[i+1] = civs[units_map[y][x][0].civ].g;
-									pixels.data[i+2] = civs[units_map[y][x][0].civ].b;
-							}
-					}
-
-					// write pixel data to destination context
-					srcContext.putImageData(pixels, 0, 0);
-					
-					var img = document.getElementById("new_img");
-					img.src = srcCanvas.toDataURL();
-					
-					ctx.drawImage(img, _tileX + 0.1*w, _tileY);
-			
-					//ctx.drawImage(model_Warrior,_tileX + 0.1*w, _tileY);
-					//ctx.fillStyle = "green"; //reset fill color
         } 
 			}
 		}
