@@ -795,11 +795,11 @@ function rightclick(event) {
 						if (unit_selected.movesleft <= 0) { //if unit has no moves left
 							//auto-select next unit
 							let foundunit = 0;
-							for (let i=0; i<civs[unit_selected.civ].units.length) {
+							for (let i=0; i<civs[unit_selected.civ].units.length; i++) {
 								if (civs[unit_selected.civ].units[i].movesleft > 0) {
 									unit_selected = civs[unit_selected.civ].units[i];
 									foundunit = 1;
-									break
+									break;
 								}
 							}
 							if (foundunit === 0) { unit_selected = {}; } //unselect unit
