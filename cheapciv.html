@@ -1118,7 +1118,7 @@ function endTurn(_civ) { //end turn for _civ
 	
 	//auto-select unit for player
 	if (_civ.id === civ_PC) {
-		unit_selected = civs[civ_PC].units[i];
+		unit_selected = civs[civ_PC].units[0];
 		xSelected = unit_selected.x; ySelected = unit_selected.y;
 	}
 	
