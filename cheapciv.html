@@ -755,7 +755,9 @@ function rightclick(event) {
 
 	if ( ySelected >= 0 && cities_map[ySelected][xSelected].length == 1 && Object.keys(city_selected).length > 0) { //if city is on the left-clicked tile
 		if ( cities_map[ySelected][xSelected][0].civ == civ_PC ) { //player can only do stuff with own city
-			cities_map[ySelected][xSelected][0].citymenu(1,event); //open city menu for right click anywhere
+			if ( _y == ySelected && _x == xSelected) {
+				cities_map[ySelected][xSelected][0].citymenu(1,event); //open city menu for right click on same tile
+			}
 		}
 	}
 
@@ -856,7 +858,6 @@ function getMoveAction(_y,_x,_civid) { //check if tile (_y,_x) can be moved to b
 				return 1;
 			}
 			else {
-				console.log("fighting");
 				return 2;
 			}
 		}
@@ -865,11 +866,11 @@ function getMoveAction(_y,_x,_civid) { //check if tile (_y,_x) can be moved to b
 				return 1;
 			}
 			else {
-				console.log("fighting");
 				return 2;
 			}
 		}
 	}
+	//return 1 for move allowed, 2 for fight, 0 for not allowed
 }
 
 function getAdjacentTiles(_y,_x) { //from tile index (y,x), get array of adjacent tiles, starting from NE -> clockwise; todo: make work for first or last tiles in x,y
