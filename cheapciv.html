@@ -737,7 +737,7 @@ function rightclick(event) {
 			else {
 				if ( isAdjacent(ySelected,xSelected,_y,_x) ) { //only allow one tile at a time; todo: pathing over multiple moves
 					//if move is allowed
-					_moveaction = getMoveAction(ySelected, xSelected, unit_selected.civ); //0 for nothing allowed, 1 for move, 2 for attack
+					_moveaction = getMoveAction(_y, _x, unit_selected.civ); //0 for nothing allowed, 1 for move, 2 for attack
 					if ( _moveaction == 1 ) { //if no units or buildings on tile, or unit's civ controls tile
 						_ind = units_map[ySelected][xSelected].findIndex( object => {return object.id === unit_selected.id;} ) //get index of selected unit in array of units on selected tile;
 						units_map[ySelected][xSelected].splice(_ind, 1); //remove selected unit from old tile
