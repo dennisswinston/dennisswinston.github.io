@@ -179,7 +179,7 @@ class Unit {
 	
 	draw(_tileX, _tileY) { //draw on screen at (_tileX, _tileY)
 		let img = models[this.model.id + this.civ];
-		models; //global
+		models; //global, needs to be called here for drawImage to work, idk why
 		ctx.drawImage(img, _tileX + 0.1*w, _tileY);
 	}
 	
@@ -1421,6 +1421,7 @@ recolorModel(model_Warrior, civs[1]);
 recolorModel(model_Settler, civs[0]);
 recolorModel(model_Settler, civs[1]);
 
+window.location.reload();
 running = 1;
 
 //game loop
