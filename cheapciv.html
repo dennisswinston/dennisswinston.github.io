@@ -782,6 +782,7 @@ function rightclick(event) {
 	if ( cities_map[_y][_x].length > 0 && Object.keys(unit_selected).length === 0 ) { //if right click on tile with city and unit is not selected
 		//select city
 		city_selected = cities_map[_y][_x][0];
+		ySelected = _y; xSelected = _x;
 		if ( cities_map[ySelected][xSelected][0].civ == civ_PC ) { //player can only do stuff with own city
 			if ( _y == ySelected && _x == xSelected) {
 				cities_map[ySelected][xSelected][0].citymenu(1,event); //open city menu for right click on same tile
