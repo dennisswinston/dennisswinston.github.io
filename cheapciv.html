@@ -907,17 +907,17 @@ function getAdjacentTiles(_y,_x) { //from tile index (y,x), get array of adjacen
 	return _tilesAdjacent;
 }
 
-function unitsmenu(open, e=null) {
+function unitsmenu(open, _y=-1, _x=-1, e=null) {
 	if (open == 1) {
 		let list = document.getElementById("unitsontile");
 		list.innerHTML = "";
 		//add list elements to menu
 		for (let i=0; i<units_map[_y][_x].length; i++) {
-				let li = document.createElement("li");
-				let _unit = units_map[_y][_x][i];
-				li.innerText = _unit.name;
-				li.setAttribute("onclick", "selectUnit(" + _unit + ")");
-				list.appendChild(li);
+			let li = document.createElement("li");
+			let _unit = units_map[_y][_x][i];
+			li.innerText = _unit.name;
+			li.setAttribute("onclick", "selectUnit(" + _unit + ")");
+			list.appendChild(li);
 		}
 		
 		let menu = document.getElementById("contextMenu_units");
@@ -943,7 +943,7 @@ function showUnitsOnTile(_y,_x, e) {
 		return; //if only one unit, don't show menu
 	}
 
-	unitsmenu(1,e);
+	unitsmenu(1,_y,_x,e);
 	
 }
 
