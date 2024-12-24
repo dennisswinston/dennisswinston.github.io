@@ -758,6 +758,8 @@ function rightclick(event) {
 	if (Object.keys(unit_selected).length === 0 || (unit_selected.x === _x && unit_selected.y === _y) ) { //if no unit selected or right clicked on selected unit, also no city on tile
 		if ( cities_map[_y][_x].length === 0 ) {
 			showUnitsOnTile(_y,_x, event); //show all units on tile
+			update_background = 1;
+			return;
 		}
 	}
 	if ( ySelected >= 0 && unit_selected != {} ) { //if unit is on the left-clicked tile
@@ -778,6 +780,8 @@ function rightclick(event) {
 						console.log("fighting");
 					}
 				}
+				update_background = 1;
+				return;
 			}
 		} 
 	}
@@ -796,11 +800,12 @@ function rightclick(event) {
 		}
 		else { //unit selected on city
 			showUnitsOnTile(_y,_x, event); //show all units on tile
+			update_background = 1;
+			return;
 		}
 			
 	}
 
-	update_background = 1; //draw unit at new tile
 }
 
 function onKeydown(event) {
@@ -888,7 +893,7 @@ function onMouseMove(event) { //scrolls screen when moused over edge
 	
 	//get tile being moused over
 	[mouseover_y_new,mouseover_x_new] = selectTile(event);
-	console.log(mouseover_x_new, mouseover_y_new);
+	//console.log(mouseover_x_new, mouseover_y_new);
 	//if (mouseover_y_new != mouseover_y && mouseover_x_new != mouseover_x) {
 		mouseover_y = mouseover_y_new; mouseover_x = mouseover_x_new;
 		update_background = 1;
@@ -1220,7 +1225,7 @@ if (update_background == 1) {
 				
 				//outline moused over tile
 				if (x === mouseover_x && y === mouseover_y) {
-					console.log(x,y);
+					//console.log(x,y);
 					outlineRectRotated(ctx, _tileX, _tileY, w, w, 45.0, "white");
 				}
    
