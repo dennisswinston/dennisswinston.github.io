@@ -935,9 +935,7 @@ function unitsmenu(open, _y=-1, _x=-1, e=null) {
 }
 
 function selectUnit(_y, _x, i) {
-	let _unit = units_map[_y][_x][i];
-	console.log(_unit.name);
-	unit_selected = _unit; //global
+	unit_selected = units_map[_y][_x][i]; //global
 	just_used_units_menu = 1; //after clicking on units menu, disable other click actions on same frame
 }
 
