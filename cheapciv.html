@@ -1029,7 +1029,7 @@ if (update_background == 1) {
 
 					let _model = units_map[y][x][0].model;
 					
-			 // create a destination canvas. Here the altered image will be placed
+					// create a destination canvas. Here the altered image will be placed
 					//var dstCanvas = document.createElement("canvas");
 					//dstCanvas.width = _model.width;
 					//dstCanvas.height = _model.height;
@@ -1039,7 +1039,7 @@ if (update_background == 1) {
 					//document.getElementById('container').appendChild(dstCanvas);
 
 					// get context to work with
-					var srcCanvas = document.createElement("canvas")
+					var srcCanvas = document.createElement("canvas");
 					srcCanvas.width = _model.width;
 					srcCanvas.height = _model.height;
 					var srcContext = srcCanvas.getContext("2d");
