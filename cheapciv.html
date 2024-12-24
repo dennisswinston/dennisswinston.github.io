@@ -1098,7 +1098,7 @@ function getShieldcost(_string) {
 
 
 function loop() {
-update_background = 1;
+update_background = 0;
 
 //check camera bounds
 if (wrapX == 1) { //if wrapping around x, jump camera to other side of map when it reaches one end
@@ -1213,7 +1213,7 @@ if (update_background == 1) {
 						drawRectRotatedColor(ctx, _tileX, _tileY, w, w, 45.0, terrain_map[y][x].color );
 					}
 				}			
-				else { //draw normally
+				else { //draw normally (colored by terrain type)
 					drawRectRotatedColor(ctx, _tileX, _tileY, w, w, 45.0, terrain_map[y][x].color );
 				}
 				
@@ -1221,10 +1221,6 @@ if (update_background == 1) {
 				//if (x === mouseover_x && y === mouseover_y) {
 					//outlineRectRotated(ctx, _tileX, _tileY, w, w, 45.0, "white");
 				//}
-				
-				//draw tile, colored by terrain type
-				//drawRectRotatedColor(ctx, _tileX, _tileY, w, w, 45.0, terrain_map[y][x].color);
-        //drawRectRotated(ctx, _tileX, _tileY, w, w, 45.0);
    
       }
 		}
