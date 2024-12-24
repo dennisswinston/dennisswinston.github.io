@@ -936,7 +936,7 @@ function unitsmenu(open, _y=-1, _x=-1, e=null) {
 
 function selectUnit(_y, _x, i) {
 	//move selected unit to front of array
-	units_map[_y][_x] = units_map[_y][_x].unshift(units_map[_y][_x].splice(i, 1)[0]);
+	units_map[_y][_x].unshift(units_map[_y][_x].splice(i, 1)[0]);
 	//selected unit is now at index 0
 	unit_selected = units_map[_y][_x][0]; //global
 	just_used_units_menu = 1; //after clicking on units menu, disable other click actions on same frame
