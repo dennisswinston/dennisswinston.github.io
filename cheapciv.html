@@ -1217,10 +1217,10 @@ if (update_background == 1) {
 					drawRectRotatedColor(ctx, _tileX, _tileY, w, w, 45.0, terrain_map[y][x].color );
 				}
 				
-				//highlight moused over tile
-				//if (x === mouseover_x && y === mouseover_y) {
-					//outlineRectRotated(ctx, _tileX, _tileY, w, w, 45.0, "white");
-				//}
+				//outline moused over tile
+				if (x === mouseover_x && y === mouseover_y) {
+					outlineRectRotated(ctx, _tileX, _tileY, w, w, 45.0, "white");
+				}
    
       }
 		}
