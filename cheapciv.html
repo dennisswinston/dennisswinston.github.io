@@ -999,6 +999,7 @@ if (update_background == 1) {
           //drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/4, w/4, 0.0);
 					
 
+					/*
 					//set g==255 to transparent
 					let canvas_temp = document.createElement('canvas');
 					let ctx_temp = canvas_temp.getContext('2d');
@@ -1022,10 +1023,12 @@ if (update_background == 1) {
 								// values 0-255 work, 255 is solid
 								pix[i + 3] = 0;
 						}
-					}
+					*/
+					
 					
 					//todo: background should be transparent, not white
-          ctx.putImageData(imgd,_tileX + 0.1*w,_tileY);
+          //ctx.putImageData(imgd,_tileX + 0.1*w,_tileY);
+					ctx.drawImage(model_Warrior,_tileX + 0.1*w, _tileY);
 					//ctx.fillStyle = "green"; //reset fill color
         }      
       }
