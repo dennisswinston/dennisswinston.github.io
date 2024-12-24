@@ -751,7 +751,7 @@ function rightclick(event) {
 	//event.preventDefault(); //prevents the usual right click menu on a webpage
 	[_y,_x] = selectTile(event); //index of clicked tile
 	//if unit is selected, try to move to right-clicked tile
-	if (Object.keys(unit_selected).length === 0) { //if no unit is selected
+	if (Object.keys(unit_selected).length === 0 || (unit_selected.x === _x && unit_selected.y === _y) ) { //if no unit selected or right clicked on selected unit
 		showUnitsOnTile(_y,_x, event); //show all units on tile
 	}
 	if ( ySelected >= 0 && unit_selected != {} ) { //if unit is on the left-clicked tile
