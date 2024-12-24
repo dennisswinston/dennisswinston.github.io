@@ -75,6 +75,7 @@
 //right click after selecting city to get menu
 
 //document.getElementById("txt1").innerHTML = "new text";
+var running = 0;
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 var fpsOut = document.getElementById('fps');
@@ -1420,7 +1421,7 @@ recolorModel(model_Warrior, civs[1]);
 recolorModel(model_Settler, civs[0]);
 recolorModel(model_Settler, civs[1]);
 
-var running = 1;
+running = 1;
 
 //game loop
 setInterval(loop,30); //run game loop every 30 ms
