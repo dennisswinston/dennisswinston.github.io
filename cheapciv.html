@@ -501,8 +501,13 @@ for (let y=0; y<numTilesY; y++) {
 }
 //starting units
 const u0 = new Unit("Warrior", 0);
-civ0.units.push(u0);
-units_map[6][12].push(u0);
+u0.x = 12; u0.y = 6;
+civs[u0.civ].units.push(u0);
+units_map[u0.y][u0.x].push(u0);
+
+const u1 = new Unit("Warrior", 1);
+u1.x = 13; u0.y = 6;
+civs[u1.civ].units.push(u1);
 
 //constants
 const MOUSE_SELECT = 0;
