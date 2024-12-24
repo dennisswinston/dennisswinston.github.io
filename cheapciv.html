@@ -732,7 +732,7 @@ function rightclick(event) {
 	//event.preventDefault(); //prevents the usual right click menu on a webpage
 	[_y,_x] = selectTile(event); //index of clicked tile
 	//if unit is selected, try to move to right-clicked tile
-	if (unit_selected == {}) { //if no unit is selected
+	if (unit_selected === {}) { //if no unit is selected
 		showUnitsOnTile(_y,_x); //show all units on tile
 	}
 	if ( ySelected >= 0 && unit_selected != {} ) { //if unit is on the left-clicked tile
@@ -891,7 +891,7 @@ function getAdjacentTiles(_y,_x) { //from tile index (y,x), get array of adjacen
 }
 
 function showUnitsOnTile(_y,_x) {
-	console.log("opening city menu for", this.name);
+	console.log("showing units on tile");
 	
 	let list = document.getElementById("unitsontile");
 	list.innerHTML = "";
