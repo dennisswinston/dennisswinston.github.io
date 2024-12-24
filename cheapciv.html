@@ -1416,12 +1416,13 @@ document.addEventListener("keydown", onKeydown);
 
 
 //set up unit models colored by civ
-recolorModel(model_Warrior, civs[0]);
-recolorModel(model_Warrior, civs[1]);
-recolorModel(model_Settler, civs[0]);
-recolorModel(model_Settler, civs[1]);
+for (let i=0; i < civs.length; i++) {
+	recolorModel(model_Warrior, civs[i]);
+	recolorModel(model_Settler, civs[i]);
+	recolorModel(model_Worker, civs[i]);
+}
 
-window.location.reload();
+window.location.reload(); //refresh page
 running = 1;
 
 //game loop
