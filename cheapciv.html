@@ -1042,7 +1042,7 @@ if (update_background == 1) {
 								g = pix[i+1],
 								b = pix[i+2];
 
-						if (r == 255 && g != 0 && b == 255) { 
+						if (r == 255 && g == 0 && b == 255) { 
 								pix[i] = civs[units_map[y][x][0].civ].r;
 								pix[i+1] = civs[units_map[y][x][0].civ].g;
 								pix[i+2] = civs[units_map[y][x][0].civ].b;
@@ -1050,7 +1050,7 @@ if (update_background == 1) {
 					}
 					
 					
-					
+					ctx.globalCompositeOperation = "source-over";
           ctx.putImageData(imgd,_tileX + 0.1*w,_tileY);
 					//ctx.drawImage(model_Warrior,_tileX + 0.1*w, _tileY);
 					//ctx.fillStyle = "green"; //reset fill color
