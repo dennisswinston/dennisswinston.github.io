@@ -160,13 +160,14 @@ class Unit {
 			civs[this.civ].units.splice(_ind2, 1); //remove selected unit from old tile
 		}
 	}
+	
 	draw(_tileX, _tileY) { //draw on screen at (_tileX, _tileY)
 			//change some pixel values to get different colors
 		//todo: create hidden image elements for each unit when civs are created
 		
 		//set r, b ==255 to transparent
 
-		let _model = units_map[y][x][0].model;
+		let _model = this.model;
 		
 		// create a destination canvas. Here the altered image will be placed
 		//var dstCanvas = document.createElement("canvas");
@@ -198,9 +199,9 @@ class Unit {
 
 				// if the pixel matches color, set alpha to 0
 				if(r == 255 && g == 0 && b == 255){
-						pixels.data[i] = civs[units_map[y][x][0].civ].r;
-						pixels.data[i+1] = civs[units_map[y][x][0].civ].g;
-						pixels.data[i+2] = civs[units_map[y][x][0].civ].b;
+						pixels.data[i] = civs[this.civ].r;
+						pixels.data[i+1] = civs[this.civ].g;
+						pixels.data[i+2] = civs[this.civ].b;
 				}
 		}
 
