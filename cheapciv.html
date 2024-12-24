@@ -522,13 +522,6 @@ for (let y=0; y<numTilesY; y++) {
 }
 
 
-//set up unit models colored by civ
-recolorModel(model_Warrior, civs[0]);
-recolorModel(model_Warrior, civs[1]);
-recolorModel(model_Settler, civs[0]);
-recolorModel(model_Settler, civs[1]);
-
-
 
 
 //starting units
@@ -1179,6 +1172,7 @@ function recolorModel(_model, _civ) {
 
 
 function loop() {
+if (running === 0) {return;}
 update_background = 1;
 
 //check camera bounds
@@ -1417,8 +1411,19 @@ document.addEventListener('contextmenu', onRightClick);
 document.addEventListener("mousemove", onMouseMove);
 document.addEventListener("focusout", (event) => {scroll_LR = 0; scroll_UD = 0}); //when not focused on this page, don't scroll
 document.addEventListener("keydown", onKeydown);
+
+
+
+//set up unit models colored by civ
+recolorModel(model_Warrior, civs[0]);
+recolorModel(model_Warrior, civs[1]);
+recolorModel(model_Settler, civs[0]);
+recolorModel(model_Settler, civs[1]);
+
+running = 1;
+
 //game loop
-setInterval(loop,30); //run game loop every 30 ms
+setInterval(loop,30,running); //run game loop every 30 ms
 
 
 
