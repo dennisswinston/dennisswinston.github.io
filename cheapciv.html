@@ -680,14 +680,16 @@ function click(event) { //left click to select unit or city
 			else {
 				unit_selected = {};
 			}
-			if (cities_map[_yi][_xi].length == 1) {
+			/*
+			if (cities_map[_yi][_xi].length == 1) { //select city
 				city_selected = cities_map[_yi][_xi][0];
 				xSelected = _xi; ySelected = _yi;
 				console.log("Selected " + city_selected.name + " (civ " + city_selected.civ + ")" );
 				city_selected.updateCity();
 				updateCityInfo(city_selected);
 			}
-			else {
+			*/
+			//else {
 				if (city_selected != {}) {
 					let menu = document.getElementById("contextMenu");
 					if (menu.style.display != "none") {
@@ -697,7 +699,7 @@ function click(event) { //left click to select unit or city
 					city_selected = {};
 					updateCityInfo(0);
 				}
-			}
+			//}
 		}
 		//if assigning citizens
 		if (city_window == 2) { //close menu before displaying city window stuff on next frame
@@ -778,6 +780,8 @@ function rightclick(event) {
 
 	//if ( ySelected >= 0 && cities_map[ySelected][xSelected].length == 1 && Object.keys(city_selected).length > 0) { //if city is on the left-clicked tile
 	if ( cities_map[_y][_x].length > 0 && Object.keys(unit_selected).length === 0 ) { //if right click on tile with city and unit is not selected
+		//select city
+		city_selected = cities_map[_y][_x][0];
 		if ( cities_map[ySelected][xSelected][0].civ == civ_PC ) { //player can only do stuff with own city
 			if ( _y == ySelected && _x == xSelected) {
 				cities_map[ySelected][xSelected][0].citymenu(1,event); //open city menu for right click on same tile
