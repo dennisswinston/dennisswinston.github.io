@@ -232,27 +232,27 @@ class Unit {
 		//document.getElementById('container').appendChild(dstCanvas);
 
 		// get context to work with
-		var srcCanvas = document.createElement("canvas");
+		let srcCanvas = document.createElement("canvas");
 		srcCanvas.width = _model.width;
 		srcCanvas.height = _model.height;
-		var srcContext = srcCanvas.getContext("2d");
+		let srcContext = srcCanvas.getContext("2d");
 		//var dstContext = dstCanvas.getContext("2d");
 
 		// draw the loaded image on the source canvas
 		srcContext.drawImage(_model, 0, 0);
 
 		// read pixels from source
-		var pixels = srcContext.getImageData(0, 0, _model.width, _model.height);
+		let pixels = srcContext.getImageData(0, 0, _model.width, _model.height);
 
 		// iterate through pixel data (1 pixels consists of 4 ints in the array)
-		for(var i = 0, len = pixels.data.length; i < len; i += 4){
-				var r = pixels.data[i];
-				var g = pixels.data[i+1];
-				var b = pixels.data[i+2];
-				var a = pixels.data[i+3];
+		for (let i = 0, len = pixels.data.length; i < len; i += 4){
+				let r = pixels.data[i];
+				let g = pixels.data[i+1];
+				let b = pixels.data[i+2];
+				let a = pixels.data[i+3];
 
 				// if the pixel matches color, set alpha to 0
-				if(r == 255 && g == 0 && b == 255){
+				if (r == 255 && g == 0 && b == 255){
 					pixels.data[i] = civs[this.civ].r;
 					pixels.data[i+1] = civs[this.civ].g;
 					pixels.data[i+2] = civs[this.civ].b;
@@ -271,7 +271,7 @@ class Unit {
 		// write pixel data to destination context
 		srcContext.putImageData(pixels, 0, 0);
 		
-		var img = document.getElementById("new_img");
+		let img = document.getElementById("new_img");
 		img.src = srcCanvas.toDataURL();
 		
 		ctx.drawImage(img, _tileX + 0.1*w, _tileY);
@@ -1137,7 +1137,7 @@ if (update_background == 1) {
         if (units_map[y][x].length > 0) { //if units_map array at tile has units in it, draw
 					//highlight selected unit
 					if (units_map[y][x][0] === unit_selected ) {
-						ctx.fillStyle = civs[unit_selected.civ].highlight();
+						//ctx.fillStyle = civs[unit_selected.civ].highlight();
 						units_map[y][x][0].drawHighlighted(_tileX, _tileY);
 					}
 					else { //if not selected, draw normally
