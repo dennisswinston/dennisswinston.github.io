@@ -775,6 +775,9 @@ function rightclick(event) {
 						units_map[_y][_x].push(unit_selected); //put unit at new tile
 						unit_selected.x = _x; unit_selected.y = _y; //update unit x,y position
 						unit_selected.movesleft -= 1; //decrease movement point; todo: take terrain into account
+						if (unit_selected.movesleft <= 0) { //if unit has no moves left
+							unit_selected = {}; //unselect unit
+						}
 					}
 					else if ( _moveaction == 2 ) { //attack
 						console.log("fighting");
