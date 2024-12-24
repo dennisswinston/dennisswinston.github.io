@@ -889,10 +889,10 @@ function onMouseMove(event) { //scrolls screen when moused over edge
 	//get tile being moused over
 	[mouseover_y_new,mouseover_x_new] = selectTile(event);
 	console.log(mouseover_x_new, mouseover_y_new);
-	if (mouseover_y_new != mouseover_y && mouseover_x_new != mouseover_x) {
+	//if (mouseover_y_new != mouseover_y && mouseover_x_new != mouseover_x) {
 		mouseover_y = mouseover_y_new; mouseover_x = mouseover_x_new;
 		update_background = 1;
-	}
+	//}
 }
 
 function getMoveAction(_y,_x,_civid) { //check if tile (_y,_x) can be moved to by a unit from civ _civid
