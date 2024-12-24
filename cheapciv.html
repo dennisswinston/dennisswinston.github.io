@@ -1023,8 +1023,8 @@ if (update_background == 1) {
           //drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/4, w/4, 0.0);
 					
 
-					//todo: change some pixel values to get different colors, do the calculation when civs are created
-					
+					//change some pixel values to get different colors
+					//todo: create hidden image elements for each unit when civs are created
 					
 					//set r, b ==255 to transparent
 
@@ -1060,9 +1060,9 @@ if (update_background == 1) {
 
 							// if the pixel matches color, set alpha to 0
 							if(r == 255 && g == 0 && b == 255){
-									pixels.data[i] = 0;
-									pixels.data[i+1] = 0;
-									pixels.data[i+2] = 255;
+									pixels.data[i] = civs[units_map[y][x][0].civ].r;
+									pixels.data[i+1] = civs[units_map[y][x][0].civ].g;
+									pixels.data[i+2] = civs[units_map[y][x][0].civ].b;
 							}
 					}
 
