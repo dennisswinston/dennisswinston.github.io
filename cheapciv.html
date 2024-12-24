@@ -505,7 +505,7 @@ for (let y=0; y<numTilesY; y++) {
   }
 }
 //starting cities
-const c0 = new City("Buttzville", 0, "Settler", 7, 4);
+const c0 = new City("Buttzville", 0, "Settler", 7, 13);
 const c1 = new City("Clowntown", 1, "Settler", 2, 3);
 const c2 = new City("Test City", 0, "Settler", 24, 7);
 cities_map[c0.y][c0.x].push(c0); //[offset][y][x]
@@ -1039,7 +1039,7 @@ function drawCitizens() {
 	updateCityInfo(city_selected);
 	
 	const tiles_adjacent = getAdjacentTiles(city_selected.y, city_selected.x); //coordinates of available tiles (o,x,y)
-	console.log(tiles_adjacent);
+
 	let _foodvals = []; //same length of _tilesAvailable
 	let _shieldvals = [];
 	let _tradevals = [];
