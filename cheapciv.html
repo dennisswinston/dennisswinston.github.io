@@ -177,6 +177,7 @@ class Unit {
 	
 	draw(_tileX, _tileY) { //draw on screen at (_tileX, _tileY)
 		let img = document.getElementById(this.model.id + this.civ);
+		console.log(this.model.id + this.civ);
 		console.log(img);
 		ctx.drawImage(img, _tileX + 0.1*w, _tileY);
 	}
