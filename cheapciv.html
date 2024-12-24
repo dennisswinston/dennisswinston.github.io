@@ -1104,6 +1104,10 @@ function endTurn(_civ) { //end turn for _civ
 		}
 		
 		_civ.cities[i].food_stored += _civ.cities[i].food;
+		if (_civ.cities[i].food_stored >= _civ.cities[i].food_to_grow) {
+			_civ.cities[i].food_stored -= _civ.cities[i].food_to_grow;
+			_civ.cities[i].population += 1;
+		}
 		//todo: grow city with food
 		
 		//todo: gold, science from trade
@@ -1111,6 +1115,14 @@ function endTurn(_civ) { //end turn for _civ
 	}
 	//increment turn counter
 	turn += 1;
+	
+	//auto-select unit for player
+	if (_civ.id === civ_PC) {
+		unit_selected = civs[civ_PC].units[i];
+		xSelected = unit_selected.x; ySelected = unit_selected.y;
+	}
+	
+	//update html
 	turninfo.innerHTML = "Turn: " + turn;
 }
 
@@ -1339,9 +1351,9 @@ if (update_background == 1) {
 					ctx.fillStyle = "gray";
 					drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/2, w/2, 0.0);
 					ctx.fillStyle = "white"; //reset fill color
-					//label city with name
+					//label city with name and population
 					ctx.font = "16px Arial";
-					ctx.fillText(cities_map[y][x][0].name, _tileX, _tileY);
+					ctx.fillText(cities_map[y][x][0].name + " (" + cities_map[y][x][0].population + ")", _tileX, _tileY);
 				}
 			}
 		}
