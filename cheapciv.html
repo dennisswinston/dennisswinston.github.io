@@ -663,7 +663,8 @@ function onRightClick(event) {
 }
 
 function click(event) { //left click to select unit or city
-	[_yi, _xi] = selectTile(event);  
+	[_yi, _xi] = selectTile(event); 
+	unitsmenu(0); //close unitsmenu on left click
   if (mouse_action == 0) {
     //if unit on tile, select unit
     //console.log(units_map[_offset][_yi][_xi]);
