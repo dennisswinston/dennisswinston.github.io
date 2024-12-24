@@ -824,8 +824,8 @@ function selectTile(event) { //returns array with: x index of tile, y index of t
 	
 	//compare clicked coordinates to center of each tile on the screen, copied from code that draws tiles each loop
 	
-	let x0 = -cameraX;// - w/2;
-	let y0 = -cameraY;// - w/2;
+	let x0 = -cameraX - w;
+	let y0 = -cameraY - w;
 	let xstart = 0;
 	let xend = numTilesX;
 	if (wrapX == 1) { //scrolling to left or right will wrap back around to the other side
