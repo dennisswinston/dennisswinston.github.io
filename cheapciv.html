@@ -109,10 +109,6 @@ var just_used_units_menu = 0;
 var mouseover_x = -1;
 var mouseover_y = -1;
 
-recolorModel(model_Warrior, 0);
-recolorModel(model_Warrior, 1);
-recolorModel(model_Settler, 0);
-recolorModel(model_Settler, 1);
 
 function randint(min,max) {
 	return Math.floor(Math.random() * (max - min) + min);
@@ -521,6 +517,17 @@ for (let y=0; y<numTilesY; y++) {
     units_map[y].push([]); //array in each tile, will contain unit objects
   }
 }
+
+
+//set up unit models colored by civ
+recolorModel(model_Warrior, civs[0]);
+recolorModel(model_Warrior, civs[1]);
+recolorModel(model_Settler, civs[0]);
+recolorModel(model_Settler, civs[1]);
+
+
+
+
 //starting units
 const u0 = new Unit("Warrior", 0);
 u0.x = 7; u0.y = 5;
