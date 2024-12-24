@@ -771,7 +771,6 @@ function rightclick(event) {
 						units_map[_y][_x].push(unit_selected); //put unit at new tile
 						unit_selected.x = _x; unit_selected.y = _y; //update unit x,y position
 						unit_selected.movesleft -= 1; //decrease movement point; todo: take terrain into account
-						just_used_units_menu = 1;
 					}
 					else if ( _moveaction == 2 ) { //attack
 						console.log("fighting");
@@ -884,6 +883,13 @@ function onMouseMove(event) { //scrolls screen when moused over edge
   else {
     scroll_UD = 0;
   }
+	
+	//get tile being moused over
+	[_yi,_xi] = selectTile(event);
+	
+	//highlight tile
+	
+	
 }
 
 function getMoveAction(_y,_x,_civid) { //check if tile (_y,_x) can be moved to by a unit from civ _civid
