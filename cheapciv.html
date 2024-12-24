@@ -1166,9 +1166,9 @@ function recolorModel(_model, _civ) {
 		// write pixel data to destination context
 		srcContext.putImageData(pixels, 0, 0);
 		
-		let img = document.createElement(_model.id + _civ.id);
-		console.log(_model.id + _civ.id);
-		//let img = document.getElementById(_model.id + _civ.id);
+		document.createElement(_model.id + _civ.id);
+		//console.log(_model.id + _civ.id);
+		let img = document.getElementById(_model.id + _civ.id);
 		img.src = srcCanvas.toDataURL();
 		
 }
