@@ -32,7 +32,8 @@
     </style>
 		
 				
-		<img id="model_Settler" src="images/test.bmp" hidden="hidden">
+		<img id="model_Settler" src="images/model_Settler.png" hidden="hidden">
+		<img id="model_Warrior" src="images/model_Worker.png" hidden="hidden">
 		<img id="model_Warrior" src="images/model_Warrior.png" hidden="hidden">
 		<img id="new_img" hidden="hidden">
 		<img id="new_img_highlighted" hidden="hidden">
@@ -136,7 +137,7 @@ class Unit {
 			this.moves = 1; //moves allowed each turn
 			this.shieldcost = 10;
 			this.hp = 1; //max hp
-			this.model = 0; //todo: model to display on map
+			this.model = model_Worker; //todo: model to display on map
 			this.icon = 0; //todo: icon
 		}
 		this.hpleft = this.hp; //current hp
