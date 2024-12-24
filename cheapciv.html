@@ -758,7 +758,7 @@ function rightclick(event) {
 			showUnitsOnTile(_y,_x, event); //show all units on tile
 		}
 	}
-	else if ( ySelected >= 0 && unit_selected != {} ) { //if unit is on the left-clicked tile
+	if ( ySelected >= 0 && unit_selected != {} ) { //if unit is on the left-clicked tile
 		if ( unit_selected.civ == civ_PC ) { //player can only move their own units, xSelected is of selected unit
 			if (unit_selected.movesleft < 1) {console.log("no moves left");} //if unit has no moves left
 			else {
@@ -782,7 +782,7 @@ function rightclick(event) {
 	}
 
 	//if ( ySelected >= 0 && cities_map[ySelected][xSelected].length == 1 && Object.keys(city_selected).length > 0) { //if city is on the left-clicked tile
-	else if ( cities_map[_y][_x].length > 0 ) { //if right click on tile with city
+	if ( cities_map[_y][_x].length > 0 ) { //if right click on tile with city
 		if (Object.keys(unit_selected).length === 0) { //no unit selected
 			//select city
 			city_selected = cities_map[_y][_x][0];
