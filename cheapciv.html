@@ -851,6 +851,8 @@ function getMoveAction(_y,_x,_civid) { //check if tile (_y,_x) can be moved to b
 		return 1;
 	}
 	else if ( units_map[_y][_x][0].civ == _civid || cities_map[_y][_x][0].civ == _civid ) { //same civ
+		console.log(_civid);
+		console.log(units_map[_y][_x][0].civ);
 		return 1;
 	}
 	else if ( units_map[_y][_x][0].civ != _civid || cities_map[_y][_x][0].civ != _civid ) {
