@@ -1030,15 +1030,18 @@ if (update_background == 1) {
 					let _model = units_map[y][x][0].model;
 					
 			 // create a destination canvas. Here the altered image will be placed
-					var dstCanvas = document.createElement("canvas");
-					dstCanvas.width = _model.width;
-					dstCanvas.height = _model.height;
+					//var dstCanvas = document.createElement("canvas");
+					//dstCanvas.width = _model.width;
+					//dstCanvas.height = _model.height;
 
 					// append the canvas elements to the container
 					//document.getElementById('container').appendChild(srcCanvas);
 					//document.getElementById('container').appendChild(dstCanvas);
 
 					// get context to work with
+					var srcCanvas = document.createElement("canvas")
+					srcCanvas.width = _model.width;
+					srcCanvas.height = _model.height;
 					var srcContext = srcCanvas.getContext("2d");
 					//var dstContext = dstCanvas.getContext("2d");
 
