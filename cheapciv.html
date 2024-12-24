@@ -1032,6 +1032,7 @@ if (update_background == 1) {
 					let _model = units_map[y][x][0].model;
 					canvas_temp.width = _model.width;
 					canvas_temp.height = _model.height;
+					ctx_temp.globalCompositeOperation = "source-over";
 					ctx_temp.drawImage(_model, 0, 0 );
 					var imgd = ctx_temp.getImageData(0,0,48,48),
 										
