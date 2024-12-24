@@ -258,9 +258,9 @@ class Unit {
 					pixels.data[i+2] = civs[this.civ].b;
 				}
 				else if (a != 0) { //highlight non-transparent tiles by increasing rgb values
-					let rn = pixels.data[i]*1.3;
-					let gn = pixels.data[i+1]*1.3;
-					let bn = pixels.data[i+2]*1.3;
+					let rn = pixels.data[i] + 40;
+					let gn = pixels.data[i+1] + 40;
+					let bn = pixels.data[i+2] + 40;
 					if (rn > 255) {rn = 255;}
 					if (gn > 255) {gn = 255;}
 					if (bn > 255) {bn = 255;}
