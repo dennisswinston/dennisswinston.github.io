@@ -747,7 +747,7 @@ function isAdjacent(ySelected,xSelected,_y,_x) { //determines if (_y, _x) is adj
 	return 0;
 }
 
-function rightclick(event) {
+function rightclick(event) { //todo: instead of adding items to menu for unit stack and city, show both menus?
 	//event.preventDefault(); //prevents the usual right click menu on a webpage
 	[_y,_x] = selectTile(event); //index of clicked tile
 	//if unit is selected, try to move to right-clicked tile
@@ -769,7 +769,7 @@ function rightclick(event) {
 						unit_selected.movesleft -= 1; //decrease movement point; todo: take terrain into account
 					}
 					else if ( _moveaction == 2 ) { //attack
-						console.log("fighting");
+						console.log("fighting not implemented yet");
 					}
 				}
 			}
