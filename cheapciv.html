@@ -1071,6 +1071,8 @@ if (update_background == 1) {
 					
 					var img = document.getElementById("new_img");
 					img.src = srcCanvas.toDataURL();
+					
+					ctx.drawImage(img,_tileX + 0.1*w, _tileY);
 			
 					//ctx.drawImage(model_Warrior,_tileX + 0.1*w, _tileY);
 					//ctx.fillStyle = "green"; //reset fill color
