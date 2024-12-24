@@ -35,6 +35,7 @@
 		<img id="model_Settler" src="images/model_Settler.png" hidden="hidden">
 		<img id="model_Worker" src="images/model_Worker.png" hidden="hidden">
 		<img id="model_Warrior" src="images/model_Warrior.png" hidden="hidden">
+		
 		<img id="new_img" hidden="hidden">
 		<img id="new_img_highlighted" hidden="hidden">
 
@@ -123,6 +124,7 @@ class Unit {
     next_unit_id += 1;
     this.name = name; //"warrior"
     this.civ = civ; //number
+		this.active = 1; //1 to auto-select before ending turn, 0 if sleeping
 		if (this.name === "Warrior") {
 			this.type = "military_land"; //same types as in getMakingType
 			this.atk = 1;
@@ -791,7 +793,16 @@ function rightclick(event) {
 						unit_selected.x = _x; unit_selected.y = _y; //update unit x,y position
 						unit_selected.movesleft -= 1; //decrease movement point; todo: take terrain into account
 						if (unit_selected.movesleft <= 0) { //if unit has no moves left
-							unit_selected = {}; //unselect unit
+							//auto-select next unit
+							let foundunit = 0;
+							for (let i=0; i<civs[unit_selected.civ].units.length) {
+								if (civs[unit_selected.civ].units[i].movesleft > 0) {
+									unit_selected = civs[unit_selected.civ].units[i];
+									foundunit = 1;
+									break
+								}
+							}
+							if (foundunit === 0) { unit_selected = {}; } //unselect unit
 						}
 					}
 					else if ( _moveaction == 2 ) { //attack
@@ -1067,8 +1078,9 @@ function endTurn(_civ) { //end turn for _civ
 		_civ.cities[i].shields_stored += _civ.cities[i].shields;
 		//make stuff with shields
 		if (_civ.cities[i].shields_stored >= _civ.cities[i].shields_to_make) {
-			//create unit
+			//make thing when there are enough shields
 			switch (getMakingType(_civ.cities[i].making)) {
+				//make unit
 				case "military_land":
 				case "military_water":
 				case "settler":
@@ -1076,15 +1088,18 @@ function endTurn(_civ) { //end turn for _civ
 					let _newunit = new Unit(_civ.cities[i].making, _civ.id);
 					units_map[_civ.cities[i].y][_civ.cities[i].x].push(_newunit)
 					_civ.units.push(_newunit)
+					//
 					break;
+				//make building
 				case "building":
 					_civ.cities[i].buildings.push(_civ.cities[i].making);
 					break;
+				//make wonder
 				case "wonder":
 					_civ.cities[i].wonders.push(_civ.cities[i].making);
 					break
 			}
-			_civ.cities[i].shields_stored = 0;
+			_civ.cities[i].shields_stored = 0; //reset shields to 0 after making thing
 		}
 		
 		_civ.cities[i].food_stored += _civ.cities[i].food;
@@ -1093,6 +1108,7 @@ function endTurn(_civ) { //end turn for _civ
 		//todo: gold, science from trade
 	
 	}
+	//increment turn counter
 	turn += 1;
 	turninfo.innerHTML = "Turn: " + turn;
 }
@@ -1120,7 +1136,7 @@ function getShieldcost(_string) {
 	if (_string === "Wealth") {return 0;}
 }
 
-function recolorModel(_model, _civ) {
+function recolorModel(_model, _civ) { //_model is in models, _civ is Civ object
 		//change some pixel values to get different colors
 
 		// create a destination canvas. Here the altered image will be placed
@@ -1417,6 +1433,7 @@ document.addEventListener("keydown", onKeydown);
 
 //set up unit models colored by civ
 for (let i=0; i < civs.length; i++) {
+	//these models have been added in the html, new elements from recolorModel used in Unit.draw()
 	recolorModel(model_Warrior, civs[i]);
 	recolorModel(model_Settler, civs[i]);
 	recolorModel(model_Worker, civs[i]);
@@ -1435,10 +1452,7 @@ setInterval(function(){ //update fps text every 1000 ms
 },1000);
 
 
-//todo: city right-click menu - list available production and switch to when clicked (use onclick functions in the html, set the number of list elements based on available units)
-//todo: in cities array, store more info than just 0 or 1 (store city object, also keep array of cities for each civ like for units)
-//todo: city production
-//todo: terrain array like cities array, color tiles by terrain type, terrain generation
-//todo: function for calculating screen position of a tile (for animations)
+//todo: city growth, trade
+//todo: terrain generation
 
 </script>
