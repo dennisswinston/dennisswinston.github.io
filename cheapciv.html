@@ -90,6 +90,7 @@ var background;
 const model_Settler = document.getElementById("model_Settler");
 const model_Warrior = document.getElementById("model_Warrior");
 const model_Worker = document.getElementById("model_Worker");
+const models = {};
 
 var next_unit_id = 0;
 var next_city_id = 0;
@@ -177,7 +178,7 @@ class Unit {
 	
 	
 	draw(_tileX, _tileY) { //draw on screen at (_tileX, _tileY)
-		let img = document.getElementById(this.model.id + this.civ);
+		let img = models[this.model.id + this.civ];
 		console.log(this.model.id + this.civ);
 		console.log(img.id);
 		ctx.drawImage(img, _tileX + 0.1*w, _tileY);
@@ -1163,11 +1164,11 @@ function recolorModel(_model, _civ) {
 		srcContext.putImageData(pixels, 0, 0);
 		
 		var imgnew = document.createElement("IMG");
-		imgnew.id = _model.id + _civ.id; 
-		console.log(imgnew.id);
+		//imgnew.id = _model.id + _civ.id; 
 		//console.log(_model.id + _civ.id);
 		//let img = document.getElementById(_model.id + _civ.id);
 		imgnew.src = srcCanvas.toDataURL();
+		models[_model.id + _civ.id] =  imgnew;
 		
 }
 
