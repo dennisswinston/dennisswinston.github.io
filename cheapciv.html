@@ -738,7 +738,7 @@ function rightclick(event) {
 	[_y,_x] = selectTile(event); //index of clicked tile
 	//if unit is selected, try to move to right-clicked tile
 	if (Object.keys(unit_selected).length === 0) { //if no unit is selected
-		showUnitsOnTile(_y,_x); //show all units on tile
+		showUnitsOnTile(_y,_x, event); //show all units on tile
 	}
 	if ( ySelected >= 0 && unit_selected != {} ) { //if unit is on the left-clicked tile
 		if ( unit_selected.civ == civ_PC ) { //player can only move their own units, xSelected is of selected unit
@@ -895,7 +895,7 @@ function getAdjacentTiles(_y,_x) { //from tile index (y,x), get array of adjacen
 	return _tilesAdjacent;
 }
 
-function showUnitsOnTile(_y,_x) {
+function showUnitsOnTile(_y,_x, e) {
 	console.log("showing units on tile");
 	
 	let list = document.getElementById("unitsontile");
