@@ -1035,12 +1035,12 @@ if (update_background == 1) {
 					dstCanvas.height = _model.height;
 
 					// append the canvas elements to the container
-					document.getElementById('container').appendChild(srcCanvas);
-					document.getElementById('container').appendChild(dstCanvas);
+					//document.getElementById('container').appendChild(srcCanvas);
+					//document.getElementById('container').appendChild(dstCanvas);
 
 					// get context to work with
 					var srcContext = srcCanvas.getContext("2d");
-					var dstContext = dstCanvas.getContext("2d");
+					//var dstContext = dstCanvas.getContext("2d");
 
 					// draw the loaded image on the source canvas
 					srcContext.drawImage(_model, 0, 0);
