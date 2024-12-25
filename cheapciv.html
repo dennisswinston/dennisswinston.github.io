@@ -1056,7 +1056,6 @@ function drawCitizens() {
 			drawRectRotated(ctx, _xScreen + 0.2*w, _yScreen + w/2, w/4, w/4, 0.0);	
 		}
 		if (city_selected.tiles_worked[i] == 1) { //tile worked by this city gets blue square
-			console.log("herehere");
 			[_yScreen,_xScreen] = getScreenCoordsOfTile(_y, _x);
 			ctx.fillStyle = "blue";
 			drawRectRotated(ctx, _xScreen + 0.2*w, _yScreen + w/2, w/4, w/4, 0.0);
@@ -1067,9 +1066,9 @@ function drawCitizens() {
 
 function getScreenCoordsOfTile(y,xi) { //from tile index, get center of tile in screen coords for drawing
 	//todo: handle high x when wrapped around to low x
+	if (xi > numTilesX - canvas.width/(w*1.41) && cameraX < canvas.width) {xi -= numTilesX;}
 	let _tileX = x0 + xi*w*1.41 + y*w*0.5*1.41 - cameraX;
-	let _tileY = y0 + y*w*0.5*1.41 - cameraY;	
-	console.log(_tileX, _tileY);
+	let _tileY = y0 + y*w*0.5*1.41 - cameraY;
 	return [_tileY,_tileX];
 }
 
