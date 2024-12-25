@@ -1378,17 +1378,18 @@ if (update_background == 1) {
 					drawRectRotated(ctx, _tileX + 0.2*w, _tileY + w/2, w/2, w/2, 0.0);
 					ctx.fillStyle = "white"; //reset fill color
 					//label city with name and population
-					ctx.font = "16px Arial";
+					let fontsize = 12;
+					ctx.font = fontsize + "px Arial";
 					ctx.fillText(cities_map[y][x][0].name + " (" + cities_map[y][x][0].population + ")", _tileX, _tileY);
-					ctx.fillText(cities_map[y][x][0].making + "in" + Math.ceil((cities_map[y][x][0].shields_to_make - cities_map[y][x][0].shields_stored)/cities_map[y][x][0].shields)  + "turns", _tileX, _tileY + 16);
+					ctx.fillText(cities_map[y][x][0].making + "in" + Math.ceil((cities_map[y][x][0].shields_to_make - cities_map[y][x][0].shields_stored)/cities_map[y][x][0].shields)  + "turns", _tileX, _tileY + fontsize);
 					if (cities_map[y][x][0].food >= 1) {
-						ctx.fillText("grows in " + Math.ceil((cities_map[y][x][0].food_to_grow - cities_map[y][x][0].food_stored)/cities_map[y][x][0].food) + " turns", _tileX, _tileY + 16*2);
+						ctx.fillText("grows in " + Math.ceil((cities_map[y][x][0].food_to_grow - cities_map[y][x][0].food_stored)/cities_map[y][x][0].food) + " turns", _tileX, _tileY + fontsize*2);
 					}
 					else if (cities_map[y][x][0].food == 0) {
-						ctx.fillText("not growing", _tileX, _tileY + 16*2);
+						ctx.fillText("not growing", _tileX, _tileY + fontsize*2);
 					}
 					else if (cities_map[y][x][0].food <= 0) {
-						ctx.fillText("starves in " + Math.ceil(cities_map[y][x][0].food_stored/cities_map[y][x][0].food) + " turns", _tileX, _tileY + 16*2);
+						ctx.fillText("starves in " + Math.ceil(cities_map[y][x][0].food_stored/cities_map[y][x][0].food) + " turns", _tileX, _tileY + fontsize*2);
 					}
 				}
 			}
