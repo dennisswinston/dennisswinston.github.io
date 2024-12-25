@@ -1423,11 +1423,11 @@ if (update_background == 1) {
 						units_map[y][x][0].draw(_tileX, _tileY); //draw unit
 						
 						//if more than one unit on tile, label how many
-						if (cities_map[y][x].length >= 2) {
+						if (units_map[y][x].length >= 2) {
 							let fontsize = 12;
 							ctx.font = fontsize + "px Arial";
 							ctx.fillStyle = "white";
-							ctx.fillText(cities_map[y][x].length, _tileX, _tileY);
+							ctx.fillText(units_map[y][x].length, _tileX, _tileY);
 						}
 
 						//ctx.drawImage(model_Warrior,_tileX + 0.1*w, _tileY);
