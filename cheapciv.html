@@ -781,13 +781,6 @@ function rightclick(event) {
 			update_background = 1;
 			return;
 		}
-		else { //city on tile and unit is selected
-			if ( unit_selected != {} ) {
-				showUnitsOnTile(_y,_x, event); //show all units on tile
-				update_background = 1;
-				return;
-			}
-		}
 	}
 	if ( ySelected >= 0 && unit_selected != {} ) { //if unit is on the left-clicked tile
 		if ( unit_selected.civ == civ_PC ) { //player can only move their own units, xSelected is of selected unit
