@@ -399,6 +399,7 @@ class City {
 	setProduction(n) {
 		console.log(this.production_list[n]);
 		this.making = this.production_list[n];
+		this.shields_to_make = getShieldcost(this.making);
 		updateCityInfo(this);
 	}
 }
@@ -1379,16 +1380,16 @@ if (update_background == 1) {
 					//label city with name and population
 					let fontsize = 12;
 					ctx.font = fontsize + "px Arial";
-					ctx.fillText(cities_map[y][x][0].name + " (" + cities_map[y][x][0].population + ")", _tileX, _tileY);
-					ctx.fillText(cities_map[y][x][0].making + "in " + Math.ceil((cities_map[y][x][0].shields_to_make - cities_map[y][x][0].shields_stored)/cities_map[y][x][0].shields)  + "turns", _tileX, _tileY + fontsize);
+					ctx.fillText(cities_map[y][x][0].name + " (" + cities_map[y][x][0].population + ")", _tileX, _tileY - 2*fontsize);
+					ctx.fillText(cities_map[y][x][0].making + "in " + Math.ceil((cities_map[y][x][0].shields_to_make - cities_map[y][x][0].shields_stored)/cities_map[y][x][0].shields)  + "turns", _tileX, _tileY - fontsize);
 					if (cities_map[y][x][0].food >= 1) {
-						ctx.fillText("grows in " + Math.ceil((cities_map[y][x][0].food_to_grow - cities_map[y][x][0].food_stored)/cities_map[y][x][0].food) + " turns", _tileX, _tileY + fontsize*2);
+						ctx.fillText("grows in " + Math.ceil((cities_map[y][x][0].food_to_grow - cities_map[y][x][0].food_stored)/cities_map[y][x][0].food) + " turns", _tileX, _tileY);
 					}
 					else if (cities_map[y][x][0].food == 0) {
-						ctx.fillText("not growing", _tileX, _tileY + fontsize*2);
+						ctx.fillText("not growing", _tileX, _tileY);
 					}
 					else if (cities_map[y][x][0].food <= 0) {
-						ctx.fillText("starves in " + Math.floor(1 - cities_map[y][x][0].food_stored/cities_map[y][x][0].food) + " turns", _tileX, _tileY + fontsize*2);
+						ctx.fillText("starves in " + Math.floor(1 - cities_map[y][x][0].food_stored/cities_map[y][x][0].food) + " turns", _tileX, _tileY);
 					}
 				}
 			}
