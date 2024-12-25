@@ -376,6 +376,7 @@ class City {
 		//update resources
 		this.food = 2; this.shields = 2; this.trade = 1 + terrain_map[this.y][this.x].trade; //start with city tile
 		let tiles_adjacent = getAdjacentTiles(this.y, this.x);
+		let _x; let _y;
 		for (let i=0; i<this.tiles_worked.length; i++) {
 			if (this.tiles_worked[i] == 1) { //for every tile worked, add its resources
 				[_y, _x] = tiles_adjacent[i]; //get tile indices of worked tile
