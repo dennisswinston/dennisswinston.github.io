@@ -1388,7 +1388,7 @@ if (update_background == 1) {
 						ctx.fillText("not growing", _tileX, _tileY + fontsize*2);
 					}
 					else if (cities_map[y][x][0].food <= 0) {
-						ctx.fillText("starves in " + Math.ceil(-1*cities_map[y][x][0].food_stored/cities_map[y][x][0].food) + " turns", _tileX, _tileY + fontsize*2);
+						ctx.fillText("starves in " + Math.floor(-1*cities_map[y][x][0].food_stored/cities_map[y][x][0].food) + " turns", _tileX, _tileY + fontsize*2);
 					}
 				}
 			}
