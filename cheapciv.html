@@ -1122,7 +1122,7 @@ function endTurn(_civ) { //end turn for _civ
 			if (foundtile === 0) {_civ.cities[i].entertainers += 1;}
 		}
 		else if (_civ.cities[i].food_stored < 0) { //starve
-			_civ.cities[i].food_stored = _civ.cities[i].food_to_grow;
+			_civ.cities[i].food_stored = 0;
 			_civ.cities[i].population -= 1;
 			let foundtile = 0;
 			for (let j=0; j<_civ.cities[i].tiles_worked.length; j++) {
