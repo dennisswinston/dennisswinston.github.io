@@ -334,6 +334,7 @@ class City {
 		this.making = making;
 		this.buildings = []; //names of buildings in this city
 		this.production_list = ["Settler", "Worker", "Warrior", "Wealth"]; //stuff available to produce in this city
+		this.updateCity();
 	}
   
   citymenu(open,e=null) { //open=1 opens, open=0 closes; e is click event
