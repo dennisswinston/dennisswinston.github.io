@@ -1365,7 +1365,9 @@ if (update_background == 1) {
 					ctx.fillStyle = "white"; //reset fill color
 					//label city with name and population
 					ctx.font = "16px Arial";
-					ctx.fillText(cities_map[y][x][0].name + "\n(" + cities_map[y][x][0].population + ")", _tileX, _tileY);
+					ctx.fillText(cities_map[y][x][0].name + " (" + cities_map[y][x][0].population + ")", _tileX, _tileY);
+					ctx.fillText(cities_map[y][x][0].making, _tileX, _tileY + 16);
+					ctx.fillText(cities_map[y][x][0].food_stored + "/" + cities_map[y][x][0].food_to_grow, _tileX, _tileY);
 				}
 			}
 		}
