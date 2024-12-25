@@ -774,6 +774,28 @@ function isAdjacent(ySelected,xSelected,_y,_x) { //determines if (_y, _x) is adj
 function rightclick(event) {
 	//event.preventDefault(); //prevents the usual right click menu on a webpage
 	[_y,_x] = selectTile(event); //index of clicked tile
+	
+	//if ( ySelected >= 0 && cities_map[ySelected][xSelected].length == 1 && Object.keys(city_selected).length > 0) { //if city is on the left-clicked tile
+	if ( cities_map[_y][_x].length > 0 ) { //if right click on tile with city
+		if (Object.keys(unit_selected).length === 0) { //no unit selected
+			//select city
+			city_selected = cities_map[_y][_x][0];
+			ySelected = _y; xSelected = _x;
+			if ( cities_map[ySelected][xSelected][0].civ == civ_PC ) { //player can only do stuff with own city
+				if ( _y == ySelected && _x == xSelected ) {
+					cities_map[ySelected][xSelected][0].citymenu(1,event); //open city menu for right click on same tile
+					updateCityInfo(city_selected);
+				}
+			}
+		}
+		else { //unit selected on city
+			showUnitsOnTile(_y,_x, event); //show all units on tile
+			update_background = 1;
+			return;
+		}
+			
+	}
+	
 	//if unit is selected, try to move to right-clicked tile
 	if (Object.keys(unit_selected).length === 0 || (unit_selected.x === _x && unit_selected.y === _y) ) { //if no unit selected or right clicked on selected unit
 		if ( cities_map[_y][_x].length === 0 ) { //no city on tile
@@ -782,6 +804,7 @@ function rightclick(event) {
 			return;
 		}
 	}
+	
 	if ( ySelected >= 0 && unit_selected != {} ) { //if unit is on the left-clicked tile
 		if ( unit_selected.civ == civ_PC ) { //player can only move their own units, xSelected is of selected unit
 			if (unit_selected.movesleft < 1) {console.log("no moves left");} //if unit has no moves left
@@ -819,26 +842,7 @@ function rightclick(event) {
 		} 
 	}
 
-	//if ( ySelected >= 0 && cities_map[ySelected][xSelected].length == 1 && Object.keys(city_selected).length > 0) { //if city is on the left-clicked tile
-	if ( cities_map[_y][_x].length > 0 ) { //if right click on tile with city
-		if (Object.keys(unit_selected).length === 0) { //no unit selected
-			//select city
-			city_selected = cities_map[_y][_x][0];
-			ySelected = _y; xSelected = _x;
-			if ( cities_map[ySelected][xSelected][0].civ == civ_PC ) { //player can only do stuff with own city
-				if ( _y == ySelected && _x == xSelected ) {
-					cities_map[ySelected][xSelected][0].citymenu(1,event); //open city menu for right click on same tile
-					updateCityInfo(city_selected);
-				}
-			}
-		}
-		else { //unit selected on city
-			showUnitsOnTile(_y,_x, event); //show all units on tile
-			update_background = 1;
-			return;
-		}
-			
-	}
+
 
 }
 
