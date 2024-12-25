@@ -376,7 +376,6 @@ class City {
 		//update resources
 		this.food = 0; this.shields = 0; this.trade = 0;
 		let tiles_adjacent = getAdjacentTiles(this.y, this.x);
-		let _offset = 0; let _x = 0; let _y = 0;
 		for (let i=0; i<this.tiles_worked.length; i++) {
 			if (this.tiles_worked[i] == 1) { //for every tile worked, add its resources
 				[_y, _x] = tiles_adjacent[i]; //get tile indices of worked tile
@@ -385,6 +384,7 @@ class City {
 				this.trade += terrain_map[_y][_x].trade;
 			}
 		}
+		this.food -= 2*this.population; //2 food per citizen
 		this.shields_to_make = getShieldcost(this.making);
 	}
 	
@@ -1065,8 +1065,7 @@ function drawCitizens() {
 }
 
 function getScreenCoordsOfTile(y,xi) { //from tile index, get center of tile in screen coords for drawing
-	//todo: handle high x when wrapped around to low x
-	if (xi > numTilesX - canvas.width/(w*1.41) && cameraX < canvas.width) {xi -= numTilesX;}
+	if (xi > numTilesX - canvas.width/(w*1.41) && cameraX < canvas.width) {xi -= numTilesX;} //unwrap x
 	let _tileX = x0 + xi*w*1.41 + y*w*0.5*1.41 - cameraX;
 	let _tileY = y0 + y*w*0.5*1.41 - cameraY;
 	return [_tileY,_tileX];
