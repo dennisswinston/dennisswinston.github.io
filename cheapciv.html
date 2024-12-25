@@ -1057,7 +1057,7 @@ function drawCitizens() {
 			drawRectRotated(ctx, _xScreen + 0.2*w, _yScreen + w/2, w/4, w/4, 0.0)		
 		}
 		if (city_selected.tiles_worked[i] == 1) { //tile worked by this city gets blue square
-			[_yScreen,_xScreen] = getScreenCoordsOfTile(city_selected,y, city_selected,x);
+			[_yScreen,_xScreen] = getScreenCoordsOfTile(city_selected.y, city_selected.x);
 			ctx.fillStyle = "blue";
 			drawRectRotated(ctx, _xScreen + 0.2*w, _yScreen + w/2, w/4, w/4, 0.0)		
 		}
