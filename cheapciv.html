@@ -1367,7 +1367,7 @@ if (update_background == 1) {
 					ctx.font = "16px Arial";
 					ctx.fillText(cities_map[y][x][0].name + " (" + cities_map[y][x][0].population + ")", _tileX, _tileY);
 					ctx.fillText(cities_map[y][x][0].making + "in" + Math.ceil((cities_map[y][x][0].shields_to_make - cities_map[y][x][0].shields_stored)/cities_map[y][x][0].shields)  + "turns", _tileX, _tileY + 16);
-					ctx.fillText(cities_map[y][x][0].food + "(" cities_map[y][x][0].food_stored + "/" + cities_map[y][x][0].food_to_grow + ")", _tileX, _tileY + 16*2);
+					ctx.fillText("grows in " + Math.ceil((cities_map[y][x][0].food_to_grow - cities_map[y][x][0].food_stored)/cities_map[y][x][0].food) + " turns", _tileX, _tileY + 16*2);
 				}
 			}
 		}
