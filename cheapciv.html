@@ -1045,10 +1045,6 @@ function drawCitizens() {
 		let _x = tiles_adjacent[i][1];
 		let _y = tiles_adjacent[i][0];
 		
-		[_yScreen,_xScreen] = getScreenCoordsOfTile(_y, _x);
-		ctx.fillStyle = "red";
-		drawRectRotated(ctx, _xScreen + 0.2*w, _yScreen + w/2, w/4, w/4, 0.0);
-		
 		_foodvals.push(terrain_map[_y][_x].food);
 		_shieldvals.push(terrain_map[_y][_x].shield);
 		_tradevals.push(terrain_map[_y][_x].trade);
@@ -1060,6 +1056,7 @@ function drawCitizens() {
 			drawRectRotated(ctx, _xScreen + 0.2*w, _yScreen + w/2, w/4, w/4, 0.0);	
 		}
 		if (city_selected.tiles_worked[i] == 1) { //tile worked by this city gets blue square
+			console.log("herehere");
 			[_yScreen,_xScreen] = getScreenCoordsOfTile(_y, _x);
 			ctx.fillStyle = "blue";
 			drawRectRotated(ctx, _xScreen + 0.2*w, _yScreen + w/2, w/4, w/4, 0.0);
