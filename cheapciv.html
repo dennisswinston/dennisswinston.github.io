@@ -178,6 +178,13 @@ class Unit {
 		}
 	}
 	
+	remove() { //remove from units_map[this.y][this.x] and civs[this.civ][units]
+		let _ind = units_map[this.y][this.x].findIndex( object => {return object.id === this.id;} ) //get index of selected unit in array of units on selected tile;
+		units_map[this.y][this.x].splice(_ind, 1); //remove selected unit from tile
+		//remove unit from civ's units
+		let _ind2 = civs[this.civ].units.findIndex( object => {return object.id === this.id;} ) //get index of selected unit in array of units on selected tile;
+		civs[this.civ].units.splice(_ind2, 1); //remove selected unit from old tile
+	}
 	
 	draw(_tileX, _tileY) { //draw on screen at (_tileX, _tileY)
 		let img = models[this.model.id + this.civ];
@@ -840,16 +847,8 @@ function rightclick(event) {
 						combat_result = combat(unit_selected, defender); //attacker, defender; returns int
 						if (combat_result === 1) {
 							//1: attacker wins
-							//delete defender after putting to front of stack
-							let i = 0;
-							for (let j=0; j<units_map[_y][_x]; j++) {
-								if (units_map[_y][_x][j] === defender) {
-									i = j;
-									break;
-								}
-							}
-							units_map[_y][_x].unshift(units_map[_y][_x].splice(i, 1)[0]);
-							console.log(units_map[_y][_x]);
+							//delete defender
+							defender.remove();
 							//if no units left on defending tile, move attacker to that tile
 							if (units_map[_y][_x].length === 0) {
 								//_ind = units_map[ySelected][xSelected].findIndex( object => {return object.id === unit_selected.id;} ) //get index of selected unit in array of units on selected tile;
@@ -875,7 +874,7 @@ function rightclick(event) {
 						else if (combat_result === 0) {
 							//0: defender wins
 							//delete attacker
-							units_map[ySelected][xSelected].splice(0, 1)
+							unit_selected.remove();
 						}
 					}
 				}
