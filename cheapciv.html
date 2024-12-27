@@ -834,6 +834,47 @@ function rightclick(event) {
 					}
 					else if ( _moveaction == 2 ) { //attack
 						console.log("fighting");
+						//get opponent
+						let defender = getDefender(units_map[_y][_x]); //list of units on tile being attacked
+						//combat
+						if (combat(unit_selected, defender)) { //attacker, defender
+							//1: attacker wins
+							//delete defender after putting to front of stack
+							let i = 0;
+							for (let j=0; j<units_map[_y][_x]; j++) {
+								if (units_map[_y][_x][j] === defender) {
+									i = j;
+									break;
+								}
+							}
+							units_map[_y][_x].unshift(units_map[_y][_x].splice(i, 1)[0]);
+							//if no units left on defending tile, move attacker to that tile
+							if (units_map[_y][_x].length === 0) {
+								//_ind = units_map[ySelected][xSelected].findIndex( object => {return object.id === unit_selected.id;} ) //get index of selected unit in array of units on selected tile;
+								units_map[ySelected][xSelected].splice(0, 1); //remove selected unit (moved to front of index when selected from stack) from old tile
+								units_map[_y][_x].push(unit_selected); //put unit at new tile
+								unit_selected.x = _x; unit_selected.y = _y; //update unit x,y position
+								unit_selected.movesleft -= 1; //decrease movement point; todo: take terrain into account
+								if (unit_selected.movesleft <= 0) { //if unit has no moves left
+									//auto-select next unit
+									let foundunit = 0;
+									for (let i=0; i<civs[unit_selected.civ].units.length; i++) {
+										if (civs[unit_selected.civ].units[i].movesleft > 0) {
+											unit_selected = civs[unit_selected.civ].units[i];
+											xSelected = unit_selected.x; ySelected = unit_selected.y;
+											foundunit = 1;
+											break;
+										}
+									}
+									if (foundunit === 0) { unit_selected = {}; } //unselect unit
+								}
+							}
+						}
+						else {
+							//0: defender wins
+							//delete attacker
+							units_map[ySelected][xSelected].splice(0, 1)
+						}
 					}
 				}
 				update_background = 1;
@@ -1231,6 +1272,24 @@ function recolorModel(_model, _civ) { //_model is in models, _civ is Civ object
 		
 }
 
+function getDefender(units) { //get defender from array of Units when attacked
+	for (let i=0; i<units.length; i++) {
+		units[i];
+	}
+	return units[0]; //for now, just pick first unit
+}
+
+function combat(attacker, defender) { //args: attacker, defender (Unit objects); return 1 for attacker win, 0 for defender win
+	let atk = attacker.atk;
+	let def = defender.def;
+	if (Math.random() < (atk+def)/atk) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
 
 function loop() {
 if (running === 0) {return;}
@@ -1386,7 +1445,7 @@ if (update_background == 1) {
 					let fontsize = 12;
 					ctx.font = fontsize + "px Arial";
 					ctx.fillText(cities_map[y][x][0].name + " (" + cities_map[y][x][0].population + ")", _tileX, _tileY - 2*fontsize);
-					ctx.fillText(cities_map[y][x][0].making + "in " + Math.ceil((cities_map[y][x][0].shields_to_make - cities_map[y][x][0].shields_stored)/cities_map[y][x][0].shields)  + "turns", _tileX, _tileY - fontsize);
+					ctx.fillText(cities_map[y][x][0].making + "in " + Math.ceil((cities_map[y][x][0].shields_to_make - cities_map[y][x][0].shields_stored)/cities_map[y][x][0].shields)  + " turns", _tileX, _tileY - fontsize);
 					if (cities_map[y][x][0].food >= 1) {
 						ctx.fillText("grows in " + Math.ceil((cities_map[y][x][0].food_to_grow - cities_map[y][x][0].food_stored)/cities_map[y][x][0].food) + " turns", _tileX, _tileY);
 					}
@@ -1515,7 +1574,8 @@ setInterval(function(){ //update fps text every 1000 ms
 },1000);
 
 
-//todo: city growth, trade
+//todo: combat
+//todo: trade, tech
 //todo: terrain generation
 
 </script>
