@@ -837,7 +837,8 @@ function rightclick(event) {
 						//get opponent
 						let defender = getDefender(units_map[_y][_x]); //list of units on tile being attacked
 						//combat
-						if (combat(unit_selected, defender)) { //attacker, defender
+						combat_result = combat(unit_selected, defender); //attacker, defender; returns int
+						if (combat_result === 1) {
 							//1: attacker wins
 							//delete defender after putting to front of stack
 							let i = 0;
@@ -847,6 +848,7 @@ function rightclick(event) {
 									break;
 								}
 							}
+							console.log(i);
 							units_map[_y][_x].unshift(units_map[_y][_x].splice(i, 1)[0]);
 							//if no units left on defending tile, move attacker to that tile
 							if (units_map[_y][_x].length === 0) {
@@ -870,7 +872,7 @@ function rightclick(event) {
 								}
 							}
 						}
-						else {
+						else if (combat_result === 0) {
 							//0: defender wins
 							//delete attacker
 							units_map[ySelected][xSelected].splice(0, 1)
@@ -1282,7 +1284,6 @@ function getDefender(units) { //get defender from array of Units when attacked
 function combat(attacker, defender) { //args: attacker, defender (Unit objects); return 1 for attacker win, 0 for defender win
 	let atk = attacker.atk;
 	let def = defender.def;
-	console.log(atk, def);
 	if (Math.random() < (atk+def)/atk) {
 		return 1;
 	}
