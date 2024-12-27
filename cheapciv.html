@@ -885,6 +885,19 @@ function rightclick(event) {
 							//0: defender wins
 							//delete attacker
 							unit_selected.remove();
+							
+							//auto-select next unit
+							let foundunit = 0;
+							for (let i=0; i<civs[unit_selected.civ].units.length; i++) {
+								if (civs[unit_selected.civ].units[i].movesleft > 0) {
+									unit_selected = civs[unit_selected.civ].units[i];
+									xSelected = unit_selected.x; ySelected = unit_selected.y;
+									foundunit = 1;
+									break;
+								}
+							}
+							if (foundunit === 0) { unit_selected = {}; } //unselect unit
+							
 						}
 					}
 				}
