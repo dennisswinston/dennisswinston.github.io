@@ -1293,8 +1293,8 @@ function getDefender(units) { //get defender from array of Units when attacked
 function combat(attacker, defender) { //args: attacker, defender (Unit objects); return 1 for attacker win, 0 for defender win
 	let atk = attacker.atk;
 	let def = defender.def;
-	console.log((atk+def)/atk);
-	if (Math.random() < (atk+def)/atk) {
+	console.log(atk/(atk+def));
+	if (Math.random() < atk/(atk+def)) {
 		return 1;
 	}
 	else {
