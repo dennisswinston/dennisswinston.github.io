@@ -1199,29 +1199,33 @@ function endTurn(_civ) { //end turn for _civ
 		_civ.cities[i].updateCity();
 		_civ.cities[i].shields_stored += _civ.cities[i].shields;
 		//make stuff with shields
-		if ( _civ.cities[i].shields_stored >= _civ.cities[i].shields_to_make && _civ.cities[i].population > getPopcost(_civ.cities[i].making) ) {
-			//make thing when there are enough shields
-			switch (getMakingType(_civ.cities[i].making)) {
-				//make unit
-				case "military_land":
-				case "military_water":
-				case "settler":
-				case "worker":
-					let _newunit = new Unit(_civ.cities[i].making, _civ.id);
-					units_map[_civ.cities[i].y][_civ.cities[i].x].push(_newunit)
-					_civ.units.push(_newunit)
-					//
-					break;
-				//make building
-				case "building":
-					_civ.cities[i].buildings.push(_civ.cities[i].making);
-					break;
-				//make wonder
-				case "wonder":
-					_civ.cities[i].wonders.push(_civ.cities[i].making);
-					break
+		if (_civ.cities[i].shields_stored >= _civ.cities[i].shields_to_make) {
+			if ( _civ.cities[i].population <= getPopcost(_civ.cities[i].making) ) { //check if population is high enough to make unit like settler or worker
+				_civ.cities[i].shields_stored = _civ.cities[i].shields_to_make; //keep shields at cost of unit
 			}
-			_civ.cities[i].shields_stored = 0; //reset shields to 0 after making thing
+			else { //make thing when there are enough shields and population
+				switch (getMakingType(_civ.cities[i].making)) {
+					//make unit
+					case "military_land":
+					case "military_water":
+					case "settler":
+					case "worker":
+						let _newunit = new Unit(_civ.cities[i].making, _civ.id);
+						units_map[_civ.cities[i].y][_civ.cities[i].x].push(_newunit)
+						_civ.units.push(_newunit)
+						//
+						break;
+					//make building
+					case "building":
+						_civ.cities[i].buildings.push(_civ.cities[i].making);
+						break;
+					//make wonder
+					case "wonder":
+						_civ.cities[i].wonders.push(_civ.cities[i].making);
+						break
+				}
+				_civ.cities[i].shields_stored = 0; //reset shields to 0 after making thing
+			}
 		}
 		
 		_civ.cities[i].food_stored += _civ.cities[i].food;
