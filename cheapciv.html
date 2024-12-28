@@ -722,8 +722,8 @@ function click(event) { //left click to select unit or city
 	if (Object.keys(unit_selected).length > 0) {
 		if (xClicked > canvas.width - ui_w + 16 && xClicked < canvas.width - ui_w + 16 + 48 && yClicked > canvas.height - ui_h + 16 + fontsize_ui*2 && yClicked < canvas.height - ui_h + 16 + fontsize_ui*2 + 48) {
 			[_x, _y] = getScreenCoordsOfTile( unit_selected.y, unit_selected.x );
-			cameraY = _y - 0.5*canvas.height - cameraY;
-			cameraX = _x - 0.5*canvas.width - cameraX;
+			cameraY = _y - 0.5*canvas.height + cameraY;
+			cameraX = _x - 0.5*canvas.width + cameraX;
 			return;
 		}
 	}
