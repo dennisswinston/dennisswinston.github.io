@@ -423,6 +423,8 @@ class Civ {
 		this.g = rgb[1];
 		this.b = rgb[2];
 		this.color = numToColor(this.r,this.g,this.b);
+		this.gold = 0;
+		this.science = 0;
 		//tax sliders
 		this.taxrate = 0.2;
 		this.sciencerate = 0.8;
@@ -1214,9 +1216,9 @@ function endTurn(_civ) { //end turn for _civ
 		
 		_civ.gold += _civ.taxrate*_civ.cities[i].trade;
 		_civ.science += _civ.sciencerate*_civ.cities[i].trade
-		//todo: corruption
-	
+		//todo: corruption	
 	}
+	
 	//increment turn counter
 	turn += 1;
 	
@@ -1536,6 +1538,11 @@ if (update_background == 1) {
 	ctx.fillRect(canvas.width - ui_w, canvas.height - ui_h, ui_w, ui_h);
 	ctx.strokeStyle = "black";
 	ctx.strokeRect(canvas.width - ui_w, canvas.height - ui_h, ui_w, ui_h);
+	
+	let fontsize = 12;
+	ctx.font = fontsize + "px Arial";
+	ctx.fillStyle = "black";
+	ctx.fillText("gold: " + civs[civ_PC].gold + ", science: " + civs[civ_PC].science, canvas.width - ui_w, canvas.height - ui_h);
 	
 	
 	//city window
