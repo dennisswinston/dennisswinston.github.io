@@ -1377,6 +1377,7 @@ function combat(attacker, defender) { //args: attacker, defender (Unit objects);
 		else {
 			attacker.hpleft -= 1;
 		}
+		console.log(attacker.hpleft);
 	}
 	if (defender.hpleft <= 0) {
 		return 1;
