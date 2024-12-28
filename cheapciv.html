@@ -99,6 +99,8 @@ var next_city_id = 0;
 const w = 48; //width of tile (48)
 var numTilesX = 30; //inline and offset tiles are counted separately, so numTilesX = 12 gives 24 columns
 var numTilesY = 30;
+const ui_w = 250;
+const ui_h = 100;
 var numTilesX_oncanvas = Math.ceil(canvas_width/(1.41*w));
 var scroll_rate = 10; //px per frame to scroll when mouse is at edge
 wrapX = 1; //wrap x so scrolling to edge of map wraps around back to other side
@@ -1531,9 +1533,9 @@ if (update_background == 1) {
 	
 	//draw UI
 	ctx.fillStyle = "gray";
-	ctx.fillRect(canvas.width - 100, canvas.height - 100, 100, 100);
+	ctx.fillRect(canvas.width - ui_w, canvas.height - ui_h, ui_w, ui_h);
 	ctx.strokeStyle = "black";
-	ctx.strokeRect(canvas.width - 100, canvas.height - 100, 100, 100);
+	ctx.strokeRect(canvas.width - ui_w, canvas.height - ui_h, ui_w, ui_h);
 	
 	
 	//city window
