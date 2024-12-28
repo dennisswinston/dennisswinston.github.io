@@ -883,7 +883,8 @@ function rightclick(event) {
 						}
 					}
 					else if ( _moveaction == 2 ) { //attack
-						console.log("fighting");
+						//-1 move for attacking
+						unit_selected.movesleft -= 1;
 						//get opponent
 						let defender = getDefender(units_map[_y][_x]); //list of units on tile being attacked
 						//combat
