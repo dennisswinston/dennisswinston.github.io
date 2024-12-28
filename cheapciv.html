@@ -729,6 +729,9 @@ function click(event) { //left click to select unit or city
 			return;
 		}
 	}
+	else {
+		selectNextUnit(civs[civ_PC]);
+	}
 	
 	[_yi, _xi] = selectTile(event); 
 	unitsmenu(0); //close unitsmenu on left click
@@ -936,6 +939,20 @@ function rightclick(event) {
 
 
 
+}
+
+function selectNextUnit(_civ) {
+	//auto-select next unit
+	let foundunit = 0;
+	for (let i=0; i<_civ.units.length; i++) {
+		if (_civ.units[i].movesleft > 0) {
+			unit_selected = _civ.units[i];
+			xSelected = unit_selected.x; ySelected = unit_selected.y;
+			foundunit = 1;
+			break;
+		}
+	}
+	if (foundunit === 0) { unit_selected = {}; } //unselect unit
 }
 
 function onKeydown(event) {
