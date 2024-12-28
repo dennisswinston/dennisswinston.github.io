@@ -1199,7 +1199,7 @@ function endTurn(_civ) { //end turn for _civ
 		_civ.cities[i].updateCity();
 		_civ.cities[i].shields_stored += _civ.cities[i].shields;
 		//make stuff with shields
-		if (_civ.cities[i].shields_stored >= _civ.cities[i].shields_to_make) {
+		if ( _civ.cities[i].shields_stored >= _civ.cities[i].shields_to_make && _civ.cities[i].population > getPopcost(_civ.cities[i].making) ) {
 			//make thing when there are enough shields
 			switch (getMakingType(_civ.cities[i].making)) {
 				//make unit
@@ -1291,6 +1291,12 @@ function getShieldcost(_string) {
 	if (_string === "Worker") {return 10;}
 	if (_string === "Warrior") {return 10;}
 	if (_string === "Wealth") {return 0;}
+}
+
+function getPopcost(_string) { //population cost of unit
+	if (_string === "Settler") {return 2;}
+	if (_string === "Worker") {return 1;}
+	else {return 0;}
 }
 
 function recolorModel(_model, _civ) { //_model is in models, _civ is Civ object
