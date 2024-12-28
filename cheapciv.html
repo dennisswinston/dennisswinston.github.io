@@ -1256,6 +1256,7 @@ function endTurn(_civ) { //end turn for _civ
 						break
 				}
 				_civ.cities[i].shields_stored = 0; //reset shields to 0 after making thing
+				_civ.cities[i].population -= getPopcost(_civ.cities[i].making); //lose population if thing costs population
 			}
 		}
 		
@@ -1532,7 +1533,7 @@ if (update_background == 1) {
 					let fontsize = 12;
 					ctx.font = fontsize + "px Arial";
 					ctx.fillText(cities_map[y][x][0].name + " (" + cities_map[y][x][0].population + ")", _tileX, _tileY - 2*fontsize);
-					ctx.fillText(cities_map[y][x][0].making + "in " + Math.ceil((cities_map[y][x][0].shields_to_make - cities_map[y][x][0].shields_stored)/cities_map[y][x][0].shields)  + " turns", _tileX, _tileY - fontsize);
+					ctx.fillText(cities_map[y][x][0].making + " in " + Math.ceil((cities_map[y][x][0].shields_to_make - cities_map[y][x][0].shields_stored)/cities_map[y][x][0].shields)  + " turns", _tileX, _tileY - fontsize);
 					if (cities_map[y][x][0].food >= 1) {
 						ctx.fillText("grows in " + Math.ceil((cities_map[y][x][0].food_to_grow - cities_map[y][x][0].food_stored)/cities_map[y][x][0].food) + " turns", _tileX, _tileY);
 					}
