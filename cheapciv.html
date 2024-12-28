@@ -1369,11 +1369,18 @@ function getDefender(units) { //get defender from array of Units when attacked
 function combat(attacker, defender) { //args: attacker, defender (Unit objects); return 1 for attacker win, 0 for defender win
 	let atk = attacker.atk;
 	let def = defender.def;
-	console.log(atk/(atk+def));
-	if (Math.random() < atk/(atk+def)) {
+	while (attacker.hpleft > 0 || defender.hpleft > 0) { //keep fighting until someone's hp reaches 0
+		if (Math.random() < atk/(atk+def)) {
+			defender.hpleft -= 1;
+		}
+		else {
+			attacker.hpleft -= 1;
+		}
+	}
+	if (defender.hpleft <= 0) {
 		return 1;
 	}
-	else {
+	else if (attacker.hpleft <= 0) {
 		return 0;
 	}
 }
