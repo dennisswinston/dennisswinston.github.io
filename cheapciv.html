@@ -1547,9 +1547,9 @@ if (update_background == 1) {
 
 
 	if (Object.keys(unit_selected).length > 0) { //unit selected
-		ctx.fillText("selected: " + unit_selected.name + ", hp: " + unit_selected.hpleft + "/" + unit_selected.hp ", moves: " + unit_selected.movesleft + "/" + unit_selected.moves, 0,0); // canvas.width - ui_w + 16, canvas.height - ui_h + 16 + fontsize);
+		ctx.fillText("selected: " + unit_selected.name + ", hp: " + unit_selected.hpleft + "/" + unit_selected.hp + ", moves: " + unit_selected.movesleft + "/" + unit_selected.moves, canvas.width - ui_w + 16, canvas.height - ui_h + 16 + fontsize);
 		//draw unit's icon
-		//unit_selected.draw(canvas.width - ui_w + 16, canvas.height - ui_h + 16 + fontsize*2);
+		unit_selected.draw(canvas.width - ui_w + 16, canvas.height - ui_h + 16 + fontsize*2);
 	}
 	
 
