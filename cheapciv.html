@@ -1542,7 +1542,8 @@ if (update_background == 1) {
 	let fontsize = 12;
 	ctx.font = fontsize + "px Arial";
 	ctx.fillStyle = "black";
-	ctx.fillText("gold: " + civs[civ_PC].gold + ", science: " + civs[civ_PC].science, canvas.width - ui_w, canvas.height - ui_h);
+	ctx.fillText("gold: " + paseFloat(civs[civ_PC].gold).toFixed(1) + ", science: " + parseFloat(civs[civ_PC].science).toFixed(1), canvas.width - ui_w + 16, canvas.height - ui_h + 16);
+	ctx.fillText("selected: " + unit_selected.name + ", hp: " + unit_selected.hp + "moves: " + unit_selected.movesleft + "/" + unit_selected.moves, canvas.width - ui_w + 16, canvas.height - ui_h + 16 + fontsize);
 	
 	
 	//city window
