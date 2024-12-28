@@ -187,6 +187,7 @@ class Unit {
 		//remove unit from civ's units
 		let _ind2 = civs[this.civ].units.findIndex( object => {return object.id === this.id;} ) //get index of selected unit in array of units on selected tile;
 		civs[this.civ].units.splice(_ind2, 1); //remove selected unit from old tile
+		console.log("removed");
 	}
 	
 	draw(_tileX, _tileY) { //draw on screen at (_tileX, _tileY)
