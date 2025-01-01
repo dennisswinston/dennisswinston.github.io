@@ -439,8 +439,8 @@ class City {
 		//store tile info in an object
 		let _tiles = [];
 		for (let i=0; i<tiles_adjacent.length; i++) {
-			_yi = tiles_adjacent[i][0];
-			_xi = tiles_adjacent[i][1];
+			let _yi = tiles_adjacent[i][0];
+			let _xi = tiles_adjacent[i][1];
 			if (this.tiles_available[i] == 1) { //tile is available
 				_tiles.push({index:i, food:terrain_map[_yi][_xi].food, shields:terrain_map[_yi][_xi].shields, trade:terrain_map[_yi][_xi].trade});
 			}
@@ -449,6 +449,18 @@ class City {
 		//sort tiles by foodvals (descending)
 		_tiles.sort(function(a,b){return a.food - b.food});
 		console.log(_tiles);
+		
+		//reset tiles_worked
+		this.tiles_worked = [0,0,0,0,0,0,0,0];
+		
+		for (let i=0; i<this.population; i++) { //assign each citizen
+			if (i < _tiles.length) { //if there are no more available tiles, stop assigning citizens and add entertainers
+				this.tiles_worked[i] = 1;
+			}
+			else {
+				this.entertainers += 1;
+			}
+		}
 		
 	}
 
