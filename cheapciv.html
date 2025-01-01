@@ -428,7 +428,28 @@ class City {
 	}
 	
 	ai_assignCitizens() {
-		1;
+		//determine available tiles and assign citizens to the best ones
+		this.updateCity();
+		let tiles_adjacent = getAdjacentTiles(this.y, this.x); //tiles adjacent to city
+		//determine which tiles are available from adjacent tiles and get resource values
+		const foodvals = [];
+		const shieldvals = [];
+		const tradevals = [];
+		const inds_avail = [];
+		//store tile info in an object
+		let _tiles = [];
+		for (let i=0; i<tiles_adjacent.length; i++) {
+			_yi = tiles_adjacent[i][0];
+			_xi = tiles_adjacent[i][1];
+			if (this.tiles_available[i] == 1) { //tile is available
+				_tiles.push({index:i, food:terrain_map[_yi][_xi].food, shields:terrain_map[_yi][_xi].shields, trade:terrain_map[_yi][_xi].trade});
+			}
+		}
+		
+		//sort tiles by foodvals (descending)
+		_tiles.sort(function(a,b){return a.food - b.food});
+		console.log(_tiles);
+		
 	}
 
 	ai_setProduction() {
@@ -1190,7 +1211,7 @@ function drawCitizens() {
 		let _y = tiles_adjacent[i][0];
 		
 		_foodvals.push(terrain_map[_y][_x].food);
-		_shieldvals.push(terrain_map[_y][_x].shield);
+		_shieldvals.push(terrain_map[_y][_x].shields);
 		_tradevals.push(terrain_map[_y][_x].trade);
 		
 		//draw stuff here
