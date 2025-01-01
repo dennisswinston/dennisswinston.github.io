@@ -313,14 +313,15 @@ class Unit {
 	}
 	
 	moveToTile(_y,_x) {
-		units_map[this.y][this.x].splice(0, 1); //remove selected unit (moved to front of index when selected from stack) from old tile
+		units_map[this.y][this.x].splice(0, 1); //remove unit at front of stack (moved to front of index when selected from stack) from old tile
 		units_map[_y][_x].push(this); //put unit at new tile
 		this.x = _x; this.y = _y; //update unit x,y position
 		this.movesleft -= 1; //decrease movement point; todo: take terrain into account
 	}
 	
 	ai_moveUnit() {
-		this.moveToTile(this.y+1, this.x+1);
+		//todo: keep a few defenders in city, move offensive units
+		this.moveToTile(this.y+1, getXWrapped(this.x,numTilesX));
 	}
 	
 }
