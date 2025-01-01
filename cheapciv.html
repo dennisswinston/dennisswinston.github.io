@@ -447,8 +447,7 @@ class City {
 		}
 		
 		//sort tiles by foodvals (descending)
-		_tiles.sort(function(a,b){return a.food - b.food});
-		console.log(_tiles);
+		_tiles.sort(function(a,b){return b.food - a.food});
 		
 		//reset tiles_worked
 		this.tiles_worked = [0,0,0,0,0,0,0,0];
@@ -464,7 +463,7 @@ class City {
 		
 	}
 
-	ai_setProduction() {
+	ai_setProduction() { //todo
 		1;
 	}
 	
