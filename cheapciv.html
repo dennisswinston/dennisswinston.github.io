@@ -321,7 +321,7 @@ class Unit {
 	
 	ai_moveUnit() {
 		//todo: keep a few defenders in city, move offensive units
-		this.moveToTile(this.y+1, getXWrapped(this.x,numTilesX));
+		this.moveToTile(this.y, getXWrapped(this.x + 1,numTilesX));
 	}
 	
 }
@@ -451,7 +451,7 @@ class City {
 		
 		//reset tiles_worked
 		this.tiles_worked = [0,0,0,0,0,0,0,0];
-		
+		//work tiles to maximize food
 		for (let i=0; i<this.population; i++) { //assign each citizen
 			if (i < _tiles.length) { //if there are no more available tiles, stop assigning citizens and add entertainers
 				this.tiles_worked[i] = 1;
