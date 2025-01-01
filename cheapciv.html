@@ -436,12 +436,15 @@ class City {
 				break;
 			}
 		}
-		for (let i=0; i<this.tiles_worked; i++) { //stop working tiles when lose population
-			if (tiles_worked[i] == 1) {
-				tiles_worked[i] = 0; //take citizens away from worked tiles
-			}
-			if (ct >= poploss) {
-				break;
+		if (ct < poploss) {
+			for (let i=0; i<this.tiles_worked; i++) { //stop working tiles when lose population
+				if (tiles_worked[i] == 1) {
+					tiles_worked[i] = 0; //take citizens away from worked tiles
+					ct += 1;
+				}
+				if (ct >= poploss) {
+					break;
+				}
 			}
 		}
 		this.population -= poploss;
