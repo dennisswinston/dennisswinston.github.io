@@ -312,6 +312,10 @@ class Unit {
 		ctx.drawImage(img, _tileX + 0.1*w, _tileY);
 	}
 	
+	ai_moveUnit() {
+		1;
+	}
+	
 }
 
 class City {
@@ -414,6 +418,15 @@ class City {
 		this.shields_to_make = getShieldcost(this.making);
 		updateCityInfo(this);
 	}
+	
+	ai_assignCitizens() }
+		1;
+	}
+
+	ai_setProduction() {
+		1;
+	}
+	
 }
 
 class Civ {
@@ -1277,8 +1290,37 @@ function endTurn(_civ) { //end turn for _civ
 		xSelected = unit_selected.x; ySelected = unit_selected.y;
 	}
 	
-	//update html
-	turninfo.innerHTML = "Turn: " + turn;
+	
+	//ai's turn
+	if (_civ.id === civ_PC) {
+		for (let i=0; i<civs.length; i++) {
+			if (i != civ_PC) {
+				ai_turn(civs[i]);
+			}
+		}
+		
+		//update html
+		turninfo.innerHTML = "Turn: " + turn;
+	}
+	
+	
+}
+
+
+
+function ai_turn(_civ) {
+	//1. assign citizens, set production
+	for (let i=0; i<_civ.cities.length; i++) {
+		_civ.cities[i].ai_assignCitizens();
+		_civ.cities[i].ai_setProduction();
+	}
+	//2. move units
+	for (let i=0; i<_civ.units.length; i++) {
+		_civ.units[i].ai_moveUnit();
+	}
+	//3. end turn
+	endTurn(_civ);
+	
 }
 
 function getMakingType(_string) { //is thing being made by city a unit, building, wonder, etc?
@@ -1369,6 +1411,7 @@ function getDefender(units) { //get defender from array of Units when attacked
 }
 
 function combat(attacker, defender) { //args: attacker, defender (Unit objects); return 1 for attacker win, 0 for defender win
+	//todo: allow retreat
 	let atk = attacker.atk;
 	let def = defender.def;
 	while (attacker.hpleft > 0 && defender.hpleft > 0) { //keep fighting until someone's hp reaches 0
@@ -1378,7 +1421,6 @@ function combat(attacker, defender) { //args: attacker, defender (Unit objects);
 		else {
 			attacker.hpleft -= 1;
 		}
-		console.log(attacker.hpleft, defender.hpleft);
 	}
 	if (defender.hpleft <= 0) {
 		return 1;
@@ -1695,7 +1737,6 @@ setInterval(function(){ //update fps text every 1000 ms
 },1000);
 
 
-//todo: combat
 //todo: trade, tech
 //todo: terrain generation
 
