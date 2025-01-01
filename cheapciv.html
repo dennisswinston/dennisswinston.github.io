@@ -312,6 +312,13 @@ class Unit {
 		ctx.drawImage(img, _tileX + 0.1*w, _tileY);
 	}
 	
+	moveToTile(_y,_x) {
+		units_map[this.y][this.x].splice(0, 1); //remove selected unit (moved to front of index when selected from stack) from old tile
+		units_map[_y][_x].push(unit_selected); //put unit at new tile
+		this.x = _x; this.y = _y; //update unit x,y position
+		this.movesleft -= 1; //decrease movement point; todo: take terrain into account
+	}
+	
 	ai_moveUnit() {
 		1;
 	}
@@ -877,10 +884,13 @@ function rightclick(event) {
 					_moveaction = getMoveAction(_y, _x, unit_selected.civ); //0 for nothing allowed, 1 for move, 2 for attack
 					if ( _moveaction == 1 ) { //if no units or buildings on tile, or unit's civ controls tile
 						//_ind = units_map[ySelected][xSelected].findIndex( object => {return object.id === unit_selected.id;} ) //get index of selected unit in array of units on selected tile;
-						units_map[ySelected][xSelected].splice(0, 1); //remove selected unit (moved to front of index when selected from stack) from old tile
-						units_map[_y][_x].push(unit_selected); //put unit at new tile
-						unit_selected.x = _x; unit_selected.y = _y; //update unit x,y position
-						unit_selected.movesleft -= 1; //decrease movement point; todo: take terrain into account
+						
+						unit_selected.moveToTile(_y,_x);
+						
+						//units_map[ySelected][xSelected].splice(0, 1); //remove selected unit (moved to front of index when selected from stack) from old tile
+						//units_map[_y][_x].push(unit_selected); //put unit at new tile
+						//unit_selected.x = _x; unit_selected.y = _y; //update unit x,y position
+						//unit_selected.movesleft -= 1; //decrease movement point; todo: take terrain into account
 						if (unit_selected.movesleft <= 0) { //if unit has no moves left
 							//auto-select next unit
 							let foundunit = 0;
