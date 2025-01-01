@@ -427,6 +427,26 @@ class City {
 		updateCityInfo(this);
 	}
 	
+	losePopulation(poploss) { //lose population (int)
+		let ct = 0; //counter for how many citizens have been accounted for between entertainers and worked tiles
+		for (let i=0; i<this.entertainers; i++) { //lose entertainers first
+			this.entertainers -= 1;
+			ct += 1
+			if (ct >= poploss) {
+				break;
+			}
+		}
+		for (let i=0; i<this.tiles_worked; i++) { //stop working tiles when lose population
+			if (tiles_worked[i] == 1) {
+				tiles_worked[i] = 0; //take citizens away from worked tiles
+			}
+			if (ct >= poploss) {
+				break;
+			}
+		}
+		this.population -= poploss;
+	}
+	
 	ai_assignCitizens() {
 		//determine available tiles and assign citizens to the best ones
 		this.updateCity();
@@ -1314,7 +1334,9 @@ function endTurn(_civ) { //end turn for _civ
 						break
 				}
 				_civ.cities[i].shields_stored = 0; //reset shields to 0 after making thing
-				_civ.cities[i].population -= getPopcost(_civ.cities[i].making); //lose population if thing costs population
+				//_civ.cities[i].population -= getPopcost(_civ.cities[i].making); //lose population if thing costs population
+				_civ.cities[i].losePopulation(getPopcost(_civ.cities[i].making));
+
 			}
 		}
 		
