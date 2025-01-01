@@ -314,7 +314,7 @@ class Unit {
 	
 	moveToTile(_y,_x) {
 		units_map[this.y][this.x].splice(0, 1); //remove selected unit (moved to front of index when selected from stack) from old tile
-		units_map[_y][_x].push(unit_selected); //put unit at new tile
+		units_map[_y][_x].push(this); //put unit at new tile
 		this.x = _x; this.y = _y; //update unit x,y position
 		this.movesleft -= 1; //decrease movement point; todo: take terrain into account
 	}
