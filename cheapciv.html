@@ -1795,11 +1795,11 @@ if (update_background == 1) {
 	ctx.font = fontsize_ui + "px Arial";
 	ctx.fillStyle = "black";
 	ctx.fillText("gold: " + parseFloat(civs[civ_PC].gold).toFixed(1) + " (" + parseFloat(civs[civ_PC].goldperturn).toFixed(1) + "), science: " + parseFloat(civs[civ_PC].science).toFixed(1) + " (" + parseFloat(civs[civ_PC].scienceperturn).toFixed(1) + ")", canvas.width - ui_w + 16, canvas.height - ui_h + 16);
-	ctx.fillText("researching: " + civs[civ_PC].researching + " in " + civs[civ_PC].turns_to_tech, canvas.width - ui_w + 16, canvas.height - ui_h + 16+fontsize_ui*2);	
+	ctx.fillText("researching: " + civs[civ_PC].researching + " in " + civs[civ_PC].turns_to_tech, canvas.width - ui_w + 16, canvas.height - ui_h + 16+fontsize_ui);	
 
 
 	if (Object.keys(unit_selected).length > 0) { //unit selected
-		ctx.fillText("selected: " + unit_selected.name + ", hp: " + unit_selected.hpleft + "/" + unit_selected.hp + ", moves: " + unit_selected.movesleft + "/" + unit_selected.moves, canvas.width - ui_w + 16, canvas.height - ui_h + 16 + fontsize_ui);
+		ctx.fillText("selected: " + unit_selected.name + ", hp: " + unit_selected.hpleft + "/" + unit_selected.hp + ", moves: " + unit_selected.movesleft + "/" + unit_selected.moves, canvas.width - ui_w + 16, canvas.height - ui_h + 16 + fontsize_ui*2);
 		//draw unit's icon
 		unit_selected.draw(canvas.width - ui_w + 16, canvas.height - ui_h + 16 + fontsize_ui*2);
 	}
