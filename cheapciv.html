@@ -1323,6 +1323,7 @@ function endTurn(_civ) { //end turn for _civ
 					case "settler":
 					case "worker":
 						let _newunit = new Unit(_civ.cities[i].making, _civ.id);
+						_newunit.x = _civ.cities[i].x; _newunit.y = _civ.cities[i].y;
 						units_map[_civ.cities[i].y][_civ.cities[i].x].push(_newunit)
 						_civ.units.push(_newunit)
 						//
