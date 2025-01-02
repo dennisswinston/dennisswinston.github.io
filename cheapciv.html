@@ -1397,7 +1397,7 @@ function endTurn(_civ) { //end turn for _civ
 		//todo: corruption	
 		
 		//tech
-		_civ.turns_to_tech = getTurnsToTech(_civ.researching);
+		_civ.turns_to_tech = _civ.getTurnsToTech(_civ.researching);
 		
 	}
 	
