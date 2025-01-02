@@ -508,7 +508,7 @@ class City {
 
 	ai_setProduction() { //set ai production to Settler
 		if (this.population == 2 && this.food > 0) {
-			if ( this.food_to_grow <= this.getTurnsToMakeUnit("Settler") ) {
+			if ( this.getTurnsToGrow() <= this.getTurnsToMakeUnit("Settler") ) {
 				this.making = "Settler";
 			}
 		}
