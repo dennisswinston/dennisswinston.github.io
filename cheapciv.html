@@ -568,6 +568,7 @@ class Civ {
 	}
 
 	updateGoldSciencePerTurn() {
+		this.goldperturn = 0; this.scienceperturn = 0;
 		for (let i=0; i<this.cities.length; i++) {
 			this.goldperturn += this.taxrate*this.cities[i].trade;
 			this.scienceperturn += this.sciencerate*this.cities[i].trade;
