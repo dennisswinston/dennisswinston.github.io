@@ -533,11 +533,16 @@ class Civ {
 		this.color = numToColor(this.r,this.g,this.b);
 		this.gold = 0;
 		this.science = 0;
+		this.goldperturn = 0;
+		this.scienceperturn = 0;
+		this.researching = "Alphabet";
+		this.turns_to_tech = 999;
 		//tax sliders
 		this.taxrate = 0.2;
 		this.sciencerate = 0.8;
 		this.luxrate = 0.0;
   }
+	
 	highlight() { //get highlighted civ color
 	let r = 1.3*this.r;
 	let g = 1.3*this.g;
@@ -547,6 +552,16 @@ class Civ {
 	if (b > 255) {b = 255;}
 	return numToColor(r, g, b);
 	}
+	
+	getTurnsToTech(_string) {
+		if (this.science > 0) {
+			return Math.ceil( (getTechCost(_string) - this.science)/this.scienceperturn);
+		}
+		else {
+			return 999;
+		}
+	}
+
 }
 
 class Terrain {
@@ -1375,9 +1390,15 @@ function endTurn(_civ) { //end turn for _civ
 		}
 		
 		//trade
-		_civ.gold += _civ.taxrate*_civ.cities[i].trade;
-		_civ.science += _civ.sciencerate*_civ.cities[i].trade
+		_civ.goldperturn = _civ.taxrate*_civ.cities[i].trade;
+		_civ.gold += _civ.goldperturn
+		_civ.scienceperturn = _civ.sciencerate*_civ.cities[i].trade
+		_civ.science += _civ.scienceperturn
 		//todo: corruption	
+		
+		//tech
+		_civ.turns_to_tech = getTurnsToTech(_civ.researching);
+		
 	}
 	
 	//increment turn counter
@@ -1450,6 +1471,8 @@ function getPopcost(_string) { //population cost of unit
 	if (_string === "Worker") {return 1;}
 	else {return 0;}
 }
+
+
 
 function recolorModel(_model, _civ) { //_model is in models, _civ is Civ object
 		//change some pixel values to get different colors
@@ -1527,6 +1550,16 @@ function combat(attacker, defender) { //args: attacker, defender (Unit objects);
 	else if (attacker.hpleft <= 0) {
 		return 0;
 	}
+}
+
+function getTechCost(_string) {
+	if (_string === "Alphabet") {return 200;}
+	if (_string === "Bronze Working") {return 200;}
+	if (_string === "Ceremonial Burial") {return 200;}
+	if (_string === "The Wheel") {return 200;}
+	if (_string === "Warrior Code") {return 200;}
+	if (_string === "Pottery") {return 200;}
+	if (_string === "Masonry") {return 200;}
 }
 
 
@@ -1746,7 +1779,7 @@ if (update_background == 1) {
 	ctx.font = fontsize_ui + "px Arial";
 	ctx.fillStyle = "black";
 	ctx.fillText("gold: " + parseFloat(civs[civ_PC].gold).toFixed(1) + ", science: " + parseFloat(civs[civ_PC].science).toFixed(1), canvas.width - ui_w + 16, canvas.height - ui_h + 16);
-
+	ctx.fillText("researching: " + civs[civ_PC].researching + " in " + civs[civ_PC].getTurnsToTech(civs[civ_PC].researching), canvas.width - ui_w + 16, canvas.height - ui_h + 32);	
 
 
 	if (Object.keys(unit_selected).length > 0) { //unit selected
@@ -1836,8 +1869,8 @@ setInterval(function(){ //update fps text every 1000 ms
 },1000);
 
 
-//todo: ai_functions
-//todo: trade, tech
+//todo: ai_functions (ai_moveUnit)
+//todo: tech
 //todo: terrain generation
 
 </script>
