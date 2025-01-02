@@ -477,7 +477,7 @@ class City {
 		//work tiles to maximize food
 		for (let i=0; i<this.population; i++) { //assign each citizen
 			if (i < _tiles.length) { //if there are no more available tiles, stop assigning citizens and add entertainers
-				this.tiles_worked[i] = 1;
+				this.tiles_worked[_tiles[i].index] = 1;
 			}
 			else {
 				this.entertainers += 1;
@@ -1805,6 +1805,7 @@ setInterval(function(){ //update fps text every 1000 ms
 },1000);
 
 
+//todo: ai_functions
 //todo: trade, tech
 //todo: terrain generation
 
