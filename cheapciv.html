@@ -411,6 +411,11 @@ class City {
 		}
 		this.food -= 2*this.population; //2 food per citizen
 		this.shields_to_make = getShieldcost(this.making);
+		
+		//loop through all cities to update civ's gold and science per turn
+		civs[this.civ].updateGoldSciencePerTurn();
+		//update turns to tech
+		civs[this.civ].turns_to_tech = civs[this.civ].getTurnsToTech(civs[this.civ].researching);
 	}
 	
 	updateTilesAvailable() {
@@ -533,10 +538,10 @@ class Civ {
 		this.color = numToColor(this.r,this.g,this.b);
 		this.gold = 0;
 		this.science = 0;
-		this.goldperturn = 0;
-		this.scienceperturn = 0;
+		this.goldperturn = 0; //todo: recalculate in updateCity()
+		this.scienceperturn = 0; //todo: recalculate in updateCity()
 		this.researching = "Alphabet";
-		this.turns_to_tech = 999;
+		this.turns_to_tech = 999; //todo: recalculate in updateCity()
 		//tax sliders
 		this.taxrate = 0.2;
 		this.sciencerate = 0.8;
@@ -559,6 +564,13 @@ class Civ {
 		}
 		else {
 			return 999;
+		}
+	}
+
+	updateGoldSciencePerTurn() {
+		for (let i=0; i<this.cities.length; i++) {
+			this.goldperturn += _civ.taxrate*this.cities[i].trade;
+			this.scienceperturn += _civ.sciencerate*this.cities[i].trade;
 		}
 	}
 
@@ -1390,9 +1402,8 @@ function endTurn(_civ) { //end turn for _civ
 		}
 		
 		//trade
-		_civ.goldperturn = _civ.taxrate*_civ.cities[i].trade;
+		_civ.updateGoldSciencePerTurn();
 		_civ.gold += _civ.goldperturn
-		_civ.scienceperturn = _civ.sciencerate*_civ.cities[i].trade
 		_civ.science += _civ.scienceperturn
 		//todo: corruption	
 		
@@ -1400,9 +1411,6 @@ function endTurn(_civ) { //end turn for _civ
 		_civ.turns_to_tech = _civ.getTurnsToTech(_civ.researching);
 		
 	}
-	
-	//increment turn counter
-	turn += 1;
 	
 	//auto-select unit for player
 	if (_civ.id === civ_PC) {
@@ -1418,6 +1426,9 @@ function endTurn(_civ) { //end turn for _civ
 				ai_turn(civs[i]);
 			}
 		}
+		
+		//increment turn counter
+		turn += 1;
 		
 		//update html
 		turninfo.innerHTML = "Turn: " + turn;
@@ -1778,8 +1789,8 @@ if (update_background == 1) {
 	
 	ctx.font = fontsize_ui + "px Arial";
 	ctx.fillStyle = "black";
-	ctx.fillText("gold: " + parseFloat(civs[civ_PC].gold).toFixed(1) + ", science: " + parseFloat(civs[civ_PC].science).toFixed(1), canvas.width - ui_w + 16, canvas.height - ui_h + 16);
-	ctx.fillText("researching: " + civs[civ_PC].researching + " in " + civs[civ_PC].getTurnsToTech(civs[civ_PC].researching), canvas.width - ui_w + 16, canvas.height - ui_h + 32);	
+	ctx.fillText("gold: " + parseFloat(civs[civ_PC].gold).toFixed(1) + " (" + civs[civs_PC].goldperturn + "), science: " + parseFloat(civs[civ_PC].science).toFixed(1) + " (" + civs[civs_PC].scienceperturn + ")", canvas.width - ui_w + 16, canvas.height - ui_h + 16);
+	ctx.fillText("researching: " + civs[civ_PC].researching + " in " + civs[civ_PC].turns_to_tech, canvas.width - ui_w + 16, canvas.height - ui_h + 32);	
 
 
 	if (Object.keys(unit_selected).length > 0) { //unit selected
