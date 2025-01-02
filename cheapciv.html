@@ -1411,6 +1411,10 @@ function endTurn(_civ) { //end turn for _civ
 		//tech
 		_civ.turns_to_tech = _civ.getTurnsToTech(_civ.researching);
 		
+		if (_civ.turns_to_tech <= 0) {
+			_civ.researching = "next"; //todo: get tech, reset science, choose next one
+		}
+		
 	}
 	
 	//auto-select unit for player
@@ -1791,7 +1795,7 @@ if (update_background == 1) {
 	ctx.font = fontsize_ui + "px Arial";
 	ctx.fillStyle = "black";
 	ctx.fillText("gold: " + parseFloat(civs[civ_PC].gold).toFixed(1) + " (" + parseFloat(civs[civ_PC].goldperturn).toFixed(1) + "), science: " + parseFloat(civs[civ_PC].science).toFixed(1) + " (" + parseFloat(civs[civ_PC].scienceperturn).toFixed(1) + ")", canvas.width - ui_w + 16, canvas.height - ui_h + 16);
-	ctx.fillText("researching: " + civs[civ_PC].researching + " in " + civs[civ_PC].turns_to_tech, canvas.width - ui_w + 16, canvas.height - ui_h + 32);	
+	ctx.fillText("researching: " + civs[civ_PC].researching + " in " + civs[civ_PC].turns_to_tech, canvas.width - ui_w + 16, canvas.height - ui_h + 48);	
 
 
 	if (Object.keys(unit_selected).length > 0) { //unit selected
