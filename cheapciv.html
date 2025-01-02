@@ -450,6 +450,26 @@ class City {
 		this.population -= poploss;
 	}
 	
+	getTurnsToGrow() {
+		//calculae turns until growth
+		return Math.ceil((this.food_to_grow - this.food_stored)/this.food);
+	}
+	
+	getTurnsToStarve() {
+		//calculate turns until starvation
+		return Math.floor(1 - this.food_stored/this.food);
+	}
+	
+	getTurnsToMake() {
+		//calculate turns to make thing being made
+		return Math.ceil((this.shields_to_make - this.shields_stored)/this.shields);
+	}
+	
+	getTurnsToMakeUnit(_unitstring) {
+		//calculate turns to make unit given by str _unitstring
+		return Math.ceil( (getShieldcost(_unitstring) - this.shields_stored)/this.shields);
+	}
+	
 	ai_assignCitizens() {
 		//determine available tiles and assign citizens to the best ones
 		this.updateCity();
@@ -486,8 +506,18 @@ class City {
 		
 	}
 
-	ai_setProduction() { //todo
-		1;
+	ai_setProduction() { //set ai production to Settler
+		if (this.population == 2 && this.food > 0) {
+			if ( this.food_to_grow <= this.getTurnsToMakeUnit("Settler") ) {
+				this.making = "Settler";
+			}
+		}
+		else if (this.population > 2) {
+			this.making = "Settler";
+		}
+		else {
+			this.making = "Warrior"
+		}
 	}
 	
 }
@@ -1654,15 +1684,15 @@ if (update_background == 1) {
 					let fontsize = 12;
 					ctx.font = fontsize + "px Arial";
 					ctx.fillText(cities_map[y][x][0].name + " (" + cities_map[y][x][0].population + ")", _tileX, _tileY - 2*fontsize);
-					ctx.fillText(cities_map[y][x][0].making + " in " + Math.ceil((cities_map[y][x][0].shields_to_make - cities_map[y][x][0].shields_stored)/cities_map[y][x][0].shields)  + " turns", _tileX, _tileY - fontsize);
+					ctx.fillText(cities_map[y][x][0].making + " in " + cities_map[y][x][0].getTurnsToMake() + " turns", _tileX, _tileY - fontsize);
 					if (cities_map[y][x][0].food >= 1) {
-						ctx.fillText("grows in " + Math.ceil((cities_map[y][x][0].food_to_grow - cities_map[y][x][0].food_stored)/cities_map[y][x][0].food) + " turns", _tileX, _tileY);
+						ctx.fillText("grows in " + cities_map[y][x][0].getTurnsToGrow() + " turns", _tileX, _tileY);
 					}
 					else if (cities_map[y][x][0].food == 0) {
 						ctx.fillText("not growing", _tileX, _tileY);
 					}
 					else if (cities_map[y][x][0].food <= 0) {
-						ctx.fillText("starves in " + Math.floor(1 - cities_map[y][x][0].food_stored/cities_map[y][x][0].food) + " turns", _tileX, _tileY);
+						ctx.fillText("starves in " + cities_map[y][x][0].getTurnsToStarve() + " turns", _tileX, _tileY);
 					}
 				}
 			}
