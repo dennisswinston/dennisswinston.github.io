@@ -110,6 +110,14 @@
         normGeometry.skinWeights.push(geometry.skinWeights[index * 2 + 1]);
 
       }
+			
+					
+						
+			console.table(normGeometry.indices);
+			console.table(normGeometry.vertices);
+			console.table(normGeometry.normals);
+			
+			
 
       this.vertexBuffer  = gl.createBuffer();
       this.indexBuffer   = gl.createBuffer();
