@@ -13,6 +13,8 @@
 
   var gl = (function() {
 
+		console.log("updated2");
+
     var canvas = document.getElementById('canvas');
     canvas.style.position = 'fixed';
 
